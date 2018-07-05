@@ -4,30 +4,26 @@
 import { IWikiEntityReadRepository } from "../../repositories/wiki-entity-repository";
 import { Actor } from "../../entities/actor";
 import { ActorHelper } from "../../entities/actor-helper";
-import { ConceptContainer } from "../../entities/concept-container";
 import { SelectWikiEntity } from "./select-wiki-entity";
 import { UseCase } from "../usecase";
+import { ILocale } from "../../types";
 
 
-export class BuildActorByNames extends UseCase<string[], Actor | null, void> {
+export class BuildActorByNames extends UseCase<string[], Actor, void> {
     private selectWikiEntity: SelectWikiEntity;
 
-    constructor(private container: ConceptContainer,
+    constructor(private locale: ILocale,
         wikiEntityRepository: IWikiEntityReadRepository) {
         super()
 
-        this.selectWikiEntity = new SelectWikiEntity(container, wikiEntityRepository);
+        this.selectWikiEntity = new SelectWikiEntity(locale, wikiEntityRepository);
     }
 
-    protected async innerExecute(names: string[]): Promise<Actor | null> {
+    protected async innerExecute(names: string[]): Promise<Actor> {
 
         const wikiEntity = await this.selectWikiEntity.execute(names);
 
-        if (!wikiEntity) {
-            return null;
-        }
-
-        const actor = ActorHelper.build({ lang: this.container.lang, country: this.container.country }, names, wikiEntity);
+        const actor = ActorHelper.build(this.locale, names, wikiEntity || undefined);
 
         return actor;
     }

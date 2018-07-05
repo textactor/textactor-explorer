@@ -5,18 +5,18 @@ import { IWikiEntityReadRepository } from "../../repositories/wiki-entity-reposi
 import { WikiEntityHelper, EntityPopularity } from "../../entities/wiki-entity-helper";
 import { uniqByProp } from "../../utils";
 import { WikiEntity } from "../../entities/wiki-entity";
-import { ConceptContainer } from "../../entities/concept-container";
 import { UseCase } from "../usecase";
+import { ILocale } from "../../types";
 
 
 export class SelectWikiEntity extends UseCase<string[], WikiEntity | null, void> {
-    constructor(private container: ConceptContainer,
+    constructor(private locale: ILocale,
         private wikiEntityRepository: IWikiEntityReadRepository) {
         super()
     }
 
     protected async innerExecute(names: string[]): Promise<WikiEntity | null> {
-        const nameHashes = WikiEntityHelper.namesHashes(names, this.container.lang);
+        const nameHashes = WikiEntityHelper.namesHashes(names, this.locale.lang);
 
         let entities: WikiEntity[] = []
         for (let nameHash of nameHashes) {
@@ -66,8 +66,8 @@ export class SelectWikiEntity extends UseCase<string[], WikiEntity | null, void>
 
         const topEntity = entities[0];
 
-        if (topEntity.countryCodes && topEntity.countryCodes.indexOf(this.container.country) > -1) {
-            debug(`Top entity has country=${this.container.country}: ${topEntity.name}`);
+        if (topEntity.countryCodes && topEntity.countryCodes.indexOf(this.locale.country) > -1) {
+            debug(`Top entity has country=${this.locale.country}: ${topEntity.name}`);
             return uniqByProp(entities, 'id');
         }
 
@@ -100,7 +100,7 @@ export class SelectWikiEntity extends UseCase<string[], WikiEntity | null, void>
         if (!entities.length) {
             return entities;
         }
-        return entities.filter(item => item.countryCodes && item.countryCodes.indexOf(this.container.country) > -1);
+        return entities.filter(item => item.countryCodes && item.countryCodes.indexOf(this.locale.country) > -1);
     }
 }
 

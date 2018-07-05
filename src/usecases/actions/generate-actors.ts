@@ -1,10 +1,10 @@
 
 import { IWikiEntityRepository } from '../../repositories/wiki-entity-repository';
 import { Actor } from '../../entities/actor';
-import { ConceptContainer } from '../../entities/concept-container';
 import { INamesEnumerator } from '../../services/names-enumerator';
 import { BuildActorByNames } from './build-actor-by-names';
 import { UseCase, IUseCase } from '../usecase';
+import { ILocale } from '../../types';
 
 export interface OnGenerateActorCallback {
     (actor: Actor): Promise<any>
@@ -13,13 +13,13 @@ export interface OnGenerateActorCallback {
 export class GenerateActors extends UseCase<OnGenerateActorCallback, void, void> {
     private buildActor: BuildActorByNames
 
-    constructor(container: ConceptContainer,
+    constructor(locale: ILocale,
         private namesEnumerator: INamesEnumerator,
         private postNamesProcess: IUseCase<string[], void, void>,
         wikiEntityRep: IWikiEntityRepository) {
         super()
 
-        this.buildActor = new BuildActorByNames(container, wikiEntityRep);
+        this.buildActor = new BuildActorByNames(locale, wikiEntityRep);
     }
 
     protected async innerExecute(callback: OnGenerateActorCallback): Promise<void> {

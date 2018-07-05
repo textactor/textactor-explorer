@@ -10,7 +10,6 @@ import { IWikiSearchNameRepository } from '../../repositories/wiki-search-name-r
 import { WikiSearchNameHelper } from '../../entities/wiki-eearch-name';
 import { IWikiTitleRepository } from '../../repositories/wiki-title-repository';
 import { WikiTitleHelper } from '../../entities/wiki-title';
-import { ConceptContainer } from '../../entities/concept-container';
 import { IKnownNameService } from '../../services/known-names-service';
 import { UseCase } from '../usecase';
 import { uniq } from '../../utils';
@@ -21,18 +20,13 @@ export class ExploreWikiEntitiesByNames extends UseCase<string[], void, void> {
     private saveWikiEntities: SaveWikiEntities;
     private findWikiTitles: FindWikiTitles;
 
-    constructor(private container: ConceptContainer,
+    constructor(private locale: ILocale,
         entityRep: IWikiEntityRepository,
         private wikiSearchNameRep: IWikiSearchNameRepository,
         private wikiTitleRep: IWikiTitleRepository,
         countryTags: ICountryTagsService,
         knownNames: IKnownNameService) {
-        super()
-
-        const locale: ILocale = {
-            lang: container.lang,
-            country: container.country,
-        };
+        super();
 
         this.exploreWikiEntitiesByTitles = new FindWikiEntitiesByTitles(locale, knownNames);
         this.saveWikiEntities = new SaveWikiEntities(entityRep);
@@ -40,8 +34,8 @@ export class ExploreWikiEntitiesByNames extends UseCase<string[], void, void> {
     }
 
     protected async innerExecute(names: string[]): Promise<void> {
-        const lang = this.container.lang;
-        const country = this.container.country;
+        const lang = this.locale.lang;
+        const country = this.locale.country;
 
         const unknownNames: string[] = []
 
