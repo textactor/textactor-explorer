@@ -5,17 +5,17 @@ import { IWikiEntityRepository } from '../../repositories/wiki-entity-repository
 import { ICountryTagsService } from './find-wiki-titles';
 import { IWikiSearchNameRepository } from '../../repositories/wiki-search-name-repository';
 import { IWikiTitleRepository } from '../../repositories/wiki-title-repository';
-import { ConceptContainer } from '../../entities/concept-container';
 import { INamesEnumerator } from '../../services/names-enumerator';
 import { ExploreWikiEntitiesByNames } from './explore-wiki-entities-by-names';
 import { IKnownNameService } from '../../services/known-names-service';
 import { UseCase } from '../usecase';
+import { ILocale } from '../../types';
 
 
 export class ExploreWikiEntities extends UseCase<void, void, void> {
     private exploreByNames: ExploreWikiEntitiesByNames;
 
-    constructor(container: ConceptContainer,
+    constructor(locale: ILocale,
         private namesEnumerator: INamesEnumerator,
         entityRep: IWikiEntityRepository,
         wikiSearchNameRep: IWikiSearchNameRepository,
@@ -24,18 +24,16 @@ export class ExploreWikiEntities extends UseCase<void, void, void> {
         knownNames: IKnownNameService) {
         super()
 
-        this.exploreByNames = new ExploreWikiEntitiesByNames(container, entityRep, wikiSearchNameRep, wikiTitleRep, countryTags, knownNames);
+        this.exploreByNames = new ExploreWikiEntitiesByNames(locale, entityRep, wikiSearchNameRep, wikiTitleRep, countryTags, knownNames);
     }
 
     protected async innerExecute(): Promise<void> {
-        const self = this;
-
         while (!this.namesEnumerator.atEnd()) {
-            const names = await self.namesEnumerator.next();
+            const names = await this.namesEnumerator.next();
             if (names && names.length) {
                 debug(`exploring wiki entity by names: ${names}`);
 
-                await self.exploreByNames.execute(names);
+                await this.exploreByNames.execute(names);
             }
         }
     }

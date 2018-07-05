@@ -13,7 +13,7 @@ import { WikiSearchNameRepository } from "../data/wiki-search-name-repository";
 import { WikiSearchNameModel } from "../data/mongo/wiki-search-name-model";
 import { WikiTitleRepository } from "../data/wiki-title-tepository";
 import { WikiTitleModel } from "../data/mongo/wiki-title-model";
-import { ProcessConcepts } from "../usecases/process-concepts";
+import { ExploreContainer } from "../usecases/explore-container";
 import { CountryTagsService } from "./country-tags-service";
 import { KnownNameService } from "@textactor/known-names";
 
@@ -66,7 +66,7 @@ export class ContainerExplorer implements IContainerExplorer {
         const searchNameRepository = new WikiSearchNameRepository(new WikiSearchNameModel(this.connection));
         const wikiTitleRepository = new WikiTitleRepository(new WikiTitleModel(this.connection));
 
-        const processConcepts = new ProcessConcepts(
+        const processConcepts = new ExploreContainer(
             container,
             containerRepository,
             conceptRepository,

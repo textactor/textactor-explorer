@@ -12,10 +12,11 @@ import { Actor } from '../entities/actor';
 import { ICountryTagsService } from './actions/find-wiki-titles';
 import { ILocale } from '../types';
 
-export class ProcessName extends UseCase<string, Actor | null, void> {
+export class ExploreName extends UseCase<string | string[], Actor | null, void> {
     private actorBuilder: BuildActorByNames;
+    private exploreWikiEntities: ExploreWikiEntitiesByNames;
 
-    constructor(private locale: ILocale,
+    constructor(locale: ILocale,
         private entityRep: IWikiEntityRepository,
         private wikiSearchNameRep: IWikiSearchNameRepository,
         private wikiTitleRep: IWikiTitleRepository,
@@ -27,29 +28,28 @@ export class ProcessName extends UseCase<string, Actor | null, void> {
             throw new Error(`Locale is not valid: ${locale.lang}-${locale.country}`);
         }
 
-        this.actorBuilder = new BuildActorByNames(locale, entityRep);
-    }
-
-    protected async innerExecute(name: string): Promise<Actor | null> {
-        const locale = this.locale;
-
-        debug(`Start processing name: ${name}`);
-
-        const exploreWikiEntities = new ExploreWikiEntitiesByNames(locale,
+        this.actorBuilder = new BuildActorByNames(locale,
+            entityRep);
+        this.exploreWikiEntities = new ExploreWikiEntitiesByNames(locale,
             this.entityRep,
             this.wikiSearchNameRep,
             this.wikiTitleRep,
             this.countryTags,
             this.knownNames);
+    }
 
-        const names = [name];
+    protected async innerExecute(name: string | string[]): Promise<Actor | null> {
+
+        name = Array.isArray(name) ? name : [name];
+
+        debug(`Start processing: ${name}`);
 
         debug(`=====> Start exploreWikiEntities`);
-        await exploreWikiEntities.execute(names);
+        await this.exploreWikiEntities.execute(name);
         debug(`<===== End exploreWikiEntities`);
 
         debug(`=====> Start generateActors`);
-        const actor = await this.actorBuilder.execute(names);
+        const actor = await this.actorBuilder.execute(name);
         debug(`<===== End generateActors`);
 
         debug(`End processing name: ${name}`);

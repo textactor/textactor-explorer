@@ -20,11 +20,11 @@ import { CleanConceptContainer } from './actions/clean-concept-container';
 import { IKnownNameService } from '../services/known-names-service';
 import { ICountryTagsService } from './actions/find-wiki-titles';
 
-export interface ProcessConceptsOptions extends DeleteUnpopularConceptsOptions {
+export interface ExploreContainerOptions extends DeleteUnpopularConceptsOptions {
 
 }
 
-export class ProcessConcepts extends UseCase<OnGenerateActorCallback, void, ProcessConceptsOptions> {
+export class ExploreContainer extends UseCase<OnGenerateActorCallback, void, ExploreContainerOptions> {
 
     constructor(private container: ConceptContainer,
         private containerRep: IConceptContainerRepository,
@@ -42,7 +42,7 @@ export class ProcessConcepts extends UseCase<OnGenerateActorCallback, void, Proc
         }
     }
 
-    protected async innerExecute(callback: OnGenerateActorCallback, options: ProcessConceptsOptions): Promise<void> {
+    protected async innerExecute(callback: OnGenerateActorCallback, options: ExploreContainerOptions): Promise<void> {
         const container = this.container;
 
         debug(`Start processing concepts... ${JSON.stringify(options)}`);
