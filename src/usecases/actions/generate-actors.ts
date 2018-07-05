@@ -23,7 +23,7 @@ export class GenerateActors extends UseCase<OnGenerateActorCallback, void, void>
     }
 
     protected async innerExecute(callback: OnGenerateActorCallback): Promise<void> {
-        let actor: Actor | null;
+        let actor: Actor;
 
         while (!this.namesEnumerator.atEnd()) {
             try {

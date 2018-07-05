@@ -68,9 +68,25 @@ export function createDataContainerApi(connection: Connection): IDataContainerAp
 
                     await pushConcepts.execute(concepts);
                 },
-                // async pushName(name: string): Promise<void> {
+                async pushNames(names: string[]): Promise<void> {
+                    const concepts = names.map(name => {
+                        const conceptData: KnownConceptData = {
+                            name, lang: container.lang,
+                            country: container.country,
+                            containerId: container.id,
+                        };
+                        const knownName = knownNames.getKnownName(conceptData.name, conceptData.lang, conceptData.country);
+                        if (knownName && knownName.name) {
+                            conceptData.knownName = knownName.name;
+                            debug(`set concept known name: ${conceptData.name}=>${conceptData.knownName}`);
+                        }
 
-                // },
+                        return ConceptHelper.build(conceptData);
+                    }).filter(item => ConceptHelper.isValid(item));
+
+                    await pushConcepts.execute(concepts);
+
+                },
                 async end(): Promise<void> {
                     container.status = ConceptContainerStatus.COLLECT_DONE;
                     await containerModel.update({ id: container.id, set: { status: ConceptContainerStatus.COLLECT_DONE } });
@@ -145,6 +161,6 @@ export type NewDataContainer = {
 
 export interface INewDataContainer {
     pushText(text: string): Promise<void>
-    // pushName(name: string): Promise<void>
+    pushNames(names: string[]): Promise<void>
     end(): Promise<void>
 }

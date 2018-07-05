@@ -77,15 +77,7 @@ export class ExploreContainer extends UseCase<OnGenerateActorCallback, void, Exp
             debug(`<===== Start deleteInvalidConcepts`);
             await deleteInvalidConcepts.execute(undefined);
             debug(`<===== End deleteInvalidConcepts`);
-
-            // debug(`=====> Start setAbbrLongName`);
-            // const setAbbrLongNameMap = await setAbbrLongName.execute(null);
-            // debug(`setAbbrLongNameMap=${JSON.stringify(setAbbrLongNameMap)}`);
-            // debug(`<===== End setAbbrLongName`);
-            // debug(`=====> Start setAbbrConcextName`);
-            // const setAbbrContextNameMap = await setAbbrConcextName.execute(null);
-            // debug(`setAbbrContextNameMap=${JSON.stringify(setAbbrContextNameMap)}`);
-            // debug(`<===== End setAbbrConcextName`);
+            
             debug(`=====> Start deleteUnpopularConcepts`);
             await deleteUnpopularConcepts.execute(options);
             debug(`<===== End deleteUnpopularConcepts`);
