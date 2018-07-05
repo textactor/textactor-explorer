@@ -13,7 +13,7 @@ import { WikiSearchNameRepository } from "../data/wiki-search-name-repository";
 import { WikiSearchNameModel } from "../data/mongo/wiki-search-name-model";
 import { WikiTitleRepository } from "../data/wiki-title-tepository";
 import { WikiTitleModel } from "../data/mongo/wiki-title-model";
-import { ExploreContainer } from "../usecases/explore-container";
+import { ExploreContainer, ExploreContainerOptions } from "../usecases/explore-container";
 import { CountryTagsService } from "./country-tags-service";
 import { KnownNameService } from "@textactor/known-names";
 
@@ -28,6 +28,10 @@ export interface IContainerExplorer {
     start(): IContainerExplorer
 }
 
+export interface ContainerExplorerOptions extends ExploreContainerOptions {
+
+}
+
 export class ContainerExplorer implements IContainerExplorer {
     private started = false
     // private ended = false;
@@ -35,7 +39,7 @@ export class ContainerExplorer implements IContainerExplorer {
     private errorCallbacks: OnErrorCallback[] = []
     private endCallbacks: OnEndCallback[] = []
 
-    constructor(private containerId: string, private connection: Connection) {
+    constructor(private containerId: string, private options: ContainerExplorerOptions, private connection: Connection) {
 
     }
 
@@ -78,7 +82,7 @@ export class ContainerExplorer implements IContainerExplorer {
             new KnownNameService()
         );
 
-        await processConcepts.execute((actor: Actor) => this.emitData(actor));
+        await processConcepts.execute((actor: Actor) => this.emitData(actor), this.options);
     }
 
     onData(callback: OnDataCallback) {

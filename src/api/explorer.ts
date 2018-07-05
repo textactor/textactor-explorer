@@ -7,7 +7,7 @@ export type ExplorerOptions = {
 }
 
 export interface IExplorerApi extends IDataContainerApi, IDataExplorerApi {
-
+    closeDatabase(): Promise<void>
 }
 
 export function explorer(options: ExplorerOptions): IExplorerApi {
@@ -17,6 +17,9 @@ export function explorer(options: ExplorerOptions): IExplorerApi {
     const api: IExplorerApi = {
         ...createDataContainerApi(connection),
         ...createDataExplorerApi(connection),
+        closeDatabase() {
+            return connection.close();
+        }
     }
 
     return api;

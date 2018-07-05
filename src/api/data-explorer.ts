@@ -1,14 +1,14 @@
 import { Connection } from "mongoose";
-import { IContainerExplorer, ContainerExplorer } from "./container-explorer";
+import { IContainerExplorer, ContainerExplorer, ContainerExplorerOptions } from "./container-explorer";
 
 export interface IDataExplorerApi {
-    newExplorer(containerId: string): IContainerExplorer
+    newExplorer(containerId: string, options: ContainerExplorerOptions): IContainerExplorer
 }
 
 export function createDataExplorerApi(connection: Connection): IDataExplorerApi {
     return {
-        newExplorer(containerId: string) {
-            return new ContainerExplorer(containerId, connection);
+        newExplorer(containerId: string, options: ContainerExplorerOptions) {
+            return new ContainerExplorer(containerId, options, connection);
         }
     }
 }

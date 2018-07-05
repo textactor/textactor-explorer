@@ -36,6 +36,7 @@ export function createDataContainerApi(connection: Connection): IDataContainerAp
             const container = ConceptContainerHelper.build(data);
 
             return {
+                container() { return container },
                 async pushText(text: string): Promise<void> {
                     if (container.status === ConceptContainerStatus.NEW) {
                         await containerModel.update({ id: container.id, set: { status: ConceptContainerStatus.COLLECTING } });
@@ -163,4 +164,5 @@ export interface INewDataContainer {
     pushText(text: string): Promise<void>
     pushNames(names: string[]): Promise<void>
     end(): Promise<void>
+    container(): DataContainer
 }
