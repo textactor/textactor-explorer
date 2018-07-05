@@ -1,6 +1,6 @@
 
 export {
-    IExplorer,
+    IExplorerApi,
     explorer,
     ExplorerOptions,
 } from './explorer';

@@ -1,23 +1,23 @@
-import { IDataContainer, createDataContainerApi } from "./data-container";
+import { IDataContainerApi, createDataContainerApi } from "./data-container";
 import { createConnection } from "mongoose";
-import { IDataExplorer, createDataExplorerApi } from "./data-explorer";
+import { IDataExplorerApi, createDataExplorerApi } from "./data-explorer";
 
 export type ExplorerOptions = {
     dbConnectionString: string
 }
 
-export interface IExplorer extends IDataContainer, IDataExplorer {
+export interface IExplorerApi extends IDataContainerApi, IDataExplorerApi {
 
 }
 
-export function explorer(options: ExplorerOptions): IExplorer {
+export function explorer(options: ExplorerOptions): IExplorerApi {
     const { dbConnectionString } = options;
     const connection = createConnection(dbConnectionString);
 
-    const dataContainer: IExplorer = {
+    const api: IExplorerApi = {
         ...createDataContainerApi(connection),
         ...createDataExplorerApi(connection),
     }
 
-    return dataContainer;
+    return api;
 }

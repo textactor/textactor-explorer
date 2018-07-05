@@ -1,11 +1,11 @@
 import { Connection } from "mongoose";
 import { IContainerExplorer, ContainerExplorer } from "./container-explorer";
 
-export interface IDataExplorer {
+export interface IDataExplorerApi {
     newExplorer(containerId: string): IContainerExplorer
 }
 
-export function createDataExplorerApi(connection: Connection): IDataExplorer {
+export function createDataExplorerApi(connection: Connection): IDataExplorerApi {
     return {
         newExplorer(containerId: string) {
             return new ContainerExplorer(containerId, connection);

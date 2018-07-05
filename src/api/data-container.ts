@@ -15,12 +15,12 @@ import { ConceptRootNameModel } from "../data/mongo/concept-root-name-model";
 import { ConceptRootNameRepository } from "../data/concept-root-name-repository";
 import { KnownNameService } from "@textactor/known-names";
 
-export interface IDataContainer {
+export interface IDataContainerApi {
     newDataContainer(data: NewDataContainer): INewDataContainer
     findDataContainer(data: FindDataContainer): Promise<DataContainer[]>
 }
 
-export function createDataContainerApi(connection: Connection): IDataContainer {
+export function createDataContainerApi(connection: Connection): IDataContainerApi {
     const knownNames = new KnownNameService();
     const containerModel = new ConceptContainerModel(connection);
     const conceptModel = new ConceptModel(connection);
