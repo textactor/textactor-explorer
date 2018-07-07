@@ -29,7 +29,7 @@ export function createDataContainerApi(connection: Connection): IDataContainerAp
     const conceptRepository = new ConceptRepository(conceptModel);
     const rootNameRepository = new ConceptRootNameRepository(rootNameModel);
 
-    const pushConcepts = new PushContextConcepts(conceptRepository, rootNameRepository);
+    const pushConcepts = new PushContextConcepts(conceptRepository, rootNameRepository, knownNames);
 
     return {
         newDataContainer(data: NewDataContainer): INewDataContainer {
@@ -58,29 +58,19 @@ export function createDataContainerApi(connection: Connection): IDataContainerAp
                             country: context.country,
                             containerId: container.id,
                         };
-                        const knownName = knownNames.getKnownName(conceptData.name, conceptData.lang, conceptData.country);
-                        if (knownName && knownName.name) {
-                            conceptData.knownName = knownName.name;
-                            debug(`set concept known name: ${conceptData.name}=>${conceptData.knownName}`);
-                        }
 
                         return ConceptHelper.build(conceptData);
                     }).filter(item => ConceptHelper.isValid(item));
 
                     await pushConcepts.execute(concepts);
                 },
-                async pushNames(names: string[]): Promise<void> {
+                async pushTextNames(names: string[]): Promise<void> {
                     const concepts = names.map(name => {
                         const conceptData: KnownConceptData = {
                             name, lang: container.lang,
                             country: container.country,
                             containerId: container.id,
                         };
-                        const knownName = knownNames.getKnownName(conceptData.name, conceptData.lang, conceptData.country);
-                        if (knownName && knownName.name) {
-                            conceptData.knownName = knownName.name;
-                            debug(`set concept known name: ${conceptData.name}=>${conceptData.knownName}`);
-                        }
 
                         return ConceptHelper.build(conceptData);
                     }).filter(item => ConceptHelper.isValid(item));
@@ -162,7 +152,7 @@ export type NewDataContainer = {
 
 export interface INewDataContainer {
     pushText(text: string): Promise<void>
-    pushNames(names: string[]): Promise<void>
+    pushTextNames(names: string[]): Promise<void>
     end(): Promise<void>
     container(): DataContainer
 }
