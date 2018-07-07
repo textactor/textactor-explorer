@@ -7,7 +7,7 @@ import { FindWikiEntitiesByTitles } from './find-wiki-entities-by-titles';
 import { SaveWikiEntities } from './save-wiki-entities';
 import { FindWikiTitles, ICountryTagsService } from './find-wiki-titles';
 import { IWikiSearchNameRepository } from '../../repositories/wiki-search-name-repository';
-import { WikiSearchNameHelper } from '../../entities/wiki-eearch-name';
+import { WikiSearchNameHelper } from '../../entities/wiki-search-name';
 import { IWikiTitleRepository } from '../../repositories/wiki-title-repository';
 import { WikiTitleHelper } from '../../entities/wiki-title';
 import { IKnownNameService } from '../../services/known-names-service';

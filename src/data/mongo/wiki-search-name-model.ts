@@ -1,7 +1,7 @@
 import { Schema, Connection } from "mongoose";
 import { LANG_REG, COUNTRY_REG, unixTimestamp } from "../../utils";
 import { MongoModel, MongoUpdateData } from "./mongo-model";
-import { WikiSearchName } from "../../entities/wiki-eearch-name";
+import { WikiSearchName } from "../../entities/wiki-search-name";
 
 export class WikiSearchNameModel extends MongoModel<WikiSearchName> {
     constructor(connection: Connection) {

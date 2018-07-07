@@ -12,7 +12,7 @@ import { IConceptRepository } from "../repositories/concept-repository";
 import { IConceptRootNameRepository } from "../repositories/concept-root-name-repository";
 
 export interface IDataContainerApi {
-    newDataContainer(data: NewDataContainer): INewDataContainer
+    newDataContainer(data: NewDataContainer): Promise<INewDataContainer>
     findDataContainer(data: FindDataContainer): Promise<DataContainer[]>
 }
 
@@ -26,8 +26,8 @@ export function createDataContainerApi(
     const pushConcepts = new PushContextConcepts(conceptRep, rootNameRep, knownNames);
 
     return {
-        newDataContainer(data: NewDataContainer): INewDataContainer {
-            const container = ConceptContainerHelper.build(data);
+        async newDataContainer(data: NewDataContainer): Promise<INewDataContainer> {
+            const container = await containerRep.create(ConceptContainerHelper.build(data));
 
             return {
                 container() { return container },

@@ -1,6 +1,6 @@
 
 import { IWriteRepository, IReadRepository } from './repository';
-import { WikiSearchName } from '../entities/wiki-eearch-name';
+import { WikiSearchName } from '../entities/wiki-search-name';
 
 export interface IWikiSearchNameWriteRepository extends IWriteRepository<string, WikiSearchName> {
     createOrUpdate(data: WikiSearchName): Promise<WikiSearchName>

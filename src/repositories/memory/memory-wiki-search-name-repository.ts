@@ -1,6 +1,6 @@
 
 import { IWikiSearchNameRepository } from '../wiki-search-name-repository';
-import { WikiSearchName } from '../../entities/wiki-eearch-name';
+import { WikiSearchName } from '../../entities/wiki-search-name';
 import { RepUpdateData } from '../repository';
 
 
