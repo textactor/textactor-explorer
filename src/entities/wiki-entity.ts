@@ -32,6 +32,7 @@ export type WikiEntity = {
     types?: string[]
     countryCodes: string[]
     rank: number
+    links: { [lang: string]: string }
     data?: WikiEntityData
     categories?: string[]
 

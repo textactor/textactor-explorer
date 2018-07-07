@@ -129,6 +129,9 @@ const ModelSchema = new Schema({
     data: {
         type: Schema.Types.Mixed
     },
+    links: {
+        type: Schema.Types.Mixed
+    },
     createdAt: {
         type: Date,
         default: Date.now,

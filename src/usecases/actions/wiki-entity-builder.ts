@@ -53,6 +53,7 @@ export class WikiEntityBuilder implements IWikiEntityBuilder {
             categories: simpleEntity.categories,
             rank: 1,
             secondaryNames: [],
+            links: {},
         };
 
         if (!entity.countryCodes.length) {
@@ -79,6 +80,7 @@ export class WikiEntityBuilder implements IWikiEntityBuilder {
         entity.rank += entity.aliases.length;
         if (wikiEntity.sitelinks) {
             entity.rank += Object.keys(wikiEntity.sitelinks).length * 5;
+            entity.links = wikiEntity.sitelinks;
         }
         if (entity.data) {
             entity.rank += Object.keys(entity.data).length;
