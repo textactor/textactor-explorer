@@ -25,8 +25,8 @@ export class PushContextConcepts extends UseCase<Concept[], Concept[], void> {
     }
 
     private async pushConcept(concept: Concept): Promise<Concept> {
-        ConceptHelper.setSameIds(concept);
-        
+        ConceptHelper.setRootIds(concept);
+
         let data: KnownRootNameData = { name: concept.name, lang: concept.lang, country: concept.country, containerId: concept.containerId };
         const rootName = RootNameHelper.build(data);
 
@@ -52,7 +52,8 @@ export class PushContextConcepts extends UseCase<Concept[], Concept[], void> {
 
 function setSameIds(concepts: Concept[]) {
     concepts = concepts.filter(concept => !concept.isAbbr && concept.nameLength > 4);
-    const names = concepts.map(concept => concept.name);
+    const names = concepts.map(concept => concept.name)
+        .concat(concepts.filter(concept => !!concept.knownName).map(concept => concept.knownName as string));
 
     for (let concept of concepts) {
         let sameNames = getSameNames(concept.name, names, { lang: concept.lang });
@@ -62,9 +63,9 @@ function setSameIds(concepts: Concept[]) {
             if (concept.countWords === 1) {
                 sameNames = sameNames.filter(item => item.rating > 0.6);
             }
-            const sameIds = sameNames.map(item => ConceptHelper.id(item.name, concept.lang, concept.country, concept.containerId));
-            concept.sameIds = concept.sameIds.concat(sameIds);
+            const sameIds = sameNames.map(item => RootNameHelper.id(item.name, concept.lang, concept.country, concept.containerId));
+            concept.rootNameIds = concept.rootNameIds.concat(sameIds);
         }
-        concept.sameIds = uniq(concept.sameIds);
+        concept.rootNameIds = uniq(concept.rootNameIds);
     }
 }

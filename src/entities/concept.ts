@@ -23,6 +23,4 @@ export type Concept = {
     knownName?: string
 
     context?: string
-
-    sameIds: string[]
 }

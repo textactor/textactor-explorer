@@ -1,21 +1,15 @@
-import { Connection } from "mongoose";
+
 import { Actor } from "../entities/actor";
-import { ConceptContainerModel } from "../data/mongo/concept-container-model";
-import { ConceptModel } from "../data/mongo/concept-model";
-import { ConceptRootNameModel } from "../data/mongo/concept-root-name-model";
-import { ConceptRepository } from "../data/concept-repository";
-import { ConceptRootNameRepository } from "../data/concept-root-name-repository";
-import { ConceptContainerRepository } from "../data/concept-container-repository";
 import { notFound } from "boom";
-import { WikiEntityRepository } from "../data/wiki-entity-repository";
-import { WikiEntityModel } from "../data/mongo/wiki-entity-model";
-import { WikiSearchNameRepository } from "../data/wiki-search-name-repository";
-import { WikiSearchNameModel } from "../data/mongo/wiki-search-name-model";
-import { WikiTitleRepository } from "../data/wiki-title-tepository";
-import { WikiTitleModel } from "../data/mongo/wiki-title-model";
 import { ExploreContainer, ExploreContainerOptions } from "../usecases/explore-container";
 import { CountryTagsService } from "./country-tags-service";
 import { KnownNameService } from "@textactor/known-names";
+import { IConceptContainerRepository } from "../repositories/concept-container-repository";
+import { IConceptRepository } from "../repositories/concept-repository";
+import { IConceptRootNameRepository } from "../repositories/concept-root-name-repository";
+import { IWikiEntityRepository } from "../repositories/wiki-entity-repository";
+import { IWikiSearchNameRepository } from "../repositories/wiki-search-name-repository";
+import { IWikiTitleRepository } from "../repositories/wiki-title-repository";
 
 export type OnDataCallback = (data: Actor) => Promise<void>;
 export type OnErrorCallback = (error: Error) => void;
@@ -39,7 +33,15 @@ export class ContainerExplorer implements IContainerExplorer {
     private errorCallbacks: OnErrorCallback[] = []
     private endCallbacks: OnEndCallback[] = []
 
-    constructor(private containerId: string, private options: ContainerExplorerOptions, private connection: Connection) {
+    constructor(private containerId: string,
+        private options: ContainerExplorerOptions,
+        private containerRep: IConceptContainerRepository,
+        private conceptRep: IConceptRepository,
+        private rootNameRep: IConceptRootNameRepository,
+        private entityRep: IWikiEntityRepository,
+        private searchNameRep: IWikiSearchNameRepository,
+        private wikiTitleRep: IWikiTitleRepository,
+    ) {
 
     }
 
@@ -57,27 +59,20 @@ export class ContainerExplorer implements IContainerExplorer {
     }
 
     private async internalStart() {
-        const containerRepository = new ConceptContainerRepository(new ConceptContainerModel(this.connection));
-        const container = await containerRepository.getById(this.containerId);
+        const container = await this.containerRep.getById(this.containerId);
 
         if (!container) {
             throw notFound(`Not found container id=${this.containerId}`);
         }
 
-        const conceptRepository = new ConceptRepository(new ConceptModel(this.connection));
-        const rootNameRepository = new ConceptRootNameRepository(new ConceptRootNameModel(this.connection));
-        const wikiEntityRepository = new WikiEntityRepository(new WikiEntityModel(this.connection));
-        const searchNameRepository = new WikiSearchNameRepository(new WikiSearchNameModel(this.connection));
-        const wikiTitleRepository = new WikiTitleRepository(new WikiTitleModel(this.connection));
-
         const processConcepts = new ExploreContainer(
             container,
-            containerRepository,
-            conceptRepository,
-            rootNameRepository,
-            wikiEntityRepository,
-            searchNameRepository,
-            wikiTitleRepository,
+            this.containerRep,
+            this.conceptRep,
+            this.rootNameRep,
+            this.entityRep,
+            this.searchNameRep,
+            this.wikiTitleRep,
             new CountryTagsService(),
             new KnownNameService()
         );

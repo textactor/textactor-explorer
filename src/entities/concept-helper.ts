@@ -50,14 +50,11 @@ export class ConceptHelper {
             rootNameIds,
             popularity,
             context: data.context,
-            sameIds: [],
         };
 
         if (data.knownName && ConceptHelper.isValidName(data.knownName, lang)) {
             concept.knownName = data.knownName.trim();
         }
-
-        ConceptHelper.setSameIds(concept);
 
         return concept;
     }
@@ -74,19 +71,8 @@ export class ConceptHelper {
         return md5([lang.trim().toLowerCase(), country.trim().toLowerCase(), containerId.trim(), name.trim()].join('_'))
     }
 
-    public static sameId(name: string, lang: string, country: string, containerId: string) {
-        name = NameHelper.normalizeName(name, lang);
-        name = NameHelper.atonic(name);
-
-        return ConceptHelper.hash(name, lang, country, containerId);
-    }
-
-    public static setSameIds(concept: Concept) {
-        concept.sameIds.push(ConceptHelper.sameId(concept.name, concept.lang, concept.country, concept.containerId));
-        if (concept.knownName) {
-            concept.sameIds.push(ConceptHelper.sameId(concept.knownName, concept.lang, concept.country, concept.containerId));
-        }
-        concept.sameIds = uniq(concept.sameIds);
+    public static setRootIds(concept: Concept) {
+        concept.rootNameIds = uniq(concept.rootNameIds.concat(RootNameHelper.ids([concept.knownName, concept.name], concept.lang, concept.country, concept.containerId)));
     }
 
     public static id(name: string, lang: string, country: string, containerId: string) {
@@ -98,7 +84,7 @@ export class ConceptHelper {
         return uniq(names.map(name => ConceptHelper.id(name, lang, country, containerId)));
     }
 
-    public static getConceptsNames(concepts: Concept[], rootNames: boolean): string[] {
+    public static getConceptsNames(concepts: Concept[]): string[] {
         if (concepts.length === 0) {
             return [];
         }
@@ -107,11 +93,6 @@ export class ConceptHelper {
         conceptNames = conceptNames.concat(concepts.map(item => item.name));
 
         conceptNames = conceptNames.filter(name => ConceptHelper.isValidName(name, lang));
-
-        if (rootNames) {
-            conceptNames = conceptNames.concat(conceptNames.map(name => RootNameHelper.rootName(name, lang)));
-            conceptNames = conceptNames.filter(name => ConceptHelper.isValidName(name, lang));
-        }
 
         conceptNames = uniq(conceptNames);
 

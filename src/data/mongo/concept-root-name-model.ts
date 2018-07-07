@@ -67,13 +67,6 @@ const ModelSchema = new Schema({
         maxlength: 500,
         required: true,
     },
-    rootName: {
-        type: String,
-        trim: true,
-        minlength: 2,
-        maxlength: 500,
-        required: true,
-    },
     popularity: {
         type: Number,
         required: true,

@@ -20,7 +20,6 @@ export interface IConceptReadRepository extends IReadRepository<string, Concept>
     getByRootNameId(id: string): Promise<Concept[]>
     getByRootNameIds(ids: string[]): Promise<Concept[]>
     getConceptsWithAbbr(containerId: string): Promise<Concept[]>
-    getBySameIds(ids: string[]): Promise<Concept[]>
 }
 
 export interface IConceptRepository extends IConceptReadRepository, IConceptWriteRepository {

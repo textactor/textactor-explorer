@@ -1,5 +1,4 @@
 
-import formatRootName from 'root-name';
 import { RootName } from './root-name';
 import { NameHelper } from '../name-helper';
 import { md5, uniq } from '../utils';
@@ -17,15 +16,13 @@ export class RootNameHelper {
 
         const lang = data.lang.trim().toLowerCase();
         const country = data.country.trim().toLowerCase();
-        const name = data.name.trim();
+        const name = RootNameHelper.rootName(data.name.trim(), lang);
         const containerId = data.containerId.trim();
 
         const id = RootNameHelper.id(name, lang, country, containerId);
 
         const isAbbr = NameHelper.isAbbr(name);
         const countWords = NameHelper.countWords(name);
-
-        const rootName = RootNameHelper.rootName(name, lang);
 
         const popularity = 1;
 
@@ -37,7 +34,6 @@ export class RootNameHelper {
             name,
             isAbbr,
             countWords,
-            rootName,
             popularity,
         };
 
@@ -48,24 +44,13 @@ export class RootNameHelper {
         lang = lang.trim();
         name = name.trim();
 
-        const isAbbr = NameHelper.isAbbr(name);
+        name = NameHelper.normalizeName(name, lang);
+        name = NameHelper.atonic(name);
 
-        if (isAbbr) {
-            return name;
-        }
-
-        if (NameHelper.countWords(name) < 2) {
-            if (name.length < 7) {
-                return name;
-            }
-            return formatRootName(name, lang, { accuracy: 2 });
-        }
-
-        return formatRootName(name, lang);
+        return name;
     }
 
     public static id(name: string, lang: string, country: string, containerId: string) {
-        name = RootNameHelper.rootName(name, lang);
         name = NameHelper.normalizeName(name, lang);
         name = NameHelper.atonic(name);
 

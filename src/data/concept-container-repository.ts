@@ -1,8 +1,9 @@
 
 import { MongoRepository } from './mongo/mongo-repository';
 import { ConceptContainer, ConceptContainerStatus } from '../entities/concept-container';
-import { IConceptContainerRepository } from '../repositories/concept-container-repository';
+import { IConceptContainerRepository, ContainerListFilters } from '../repositories/concept-container-repository';
 import { ILocale } from '../types';
+import { MongoParams } from './mongo/mongo-model';
 
 export class ConceptContainerRepository extends MongoRepository<ConceptContainer> implements IConceptContainerRepository {
 
@@ -21,15 +22,28 @@ export class ConceptContainerRepository extends MongoRepository<ConceptContainer
         return this.model.one({ where: { uniqueName } });
     }
 
-    list(locale: ILocale, limit: number, skip?: number): Promise<ConceptContainer[]> {
-        return this.model.list({
+    list(filters: ContainerListFilters): Promise<ConceptContainer[]> {
+        const selector: MongoParams = {
             where: {
-                lang: locale.lang,
-                country: locale.country,
+                lang: filters.lang,
+                country: filters.country,
             },
-            limit,
-            offset: skip || 0,
-        });
+            limit: filters.limit,
+            offset: filters.skip,
+            sort: '-createdAt',
+        };
+
+        if (filters.ownerId) {
+            selector.where.ownerId = filters.ownerId;
+        }
+        if (filters.uniqueName) {
+            selector.where.uniqueName = filters.uniqueName;
+        }
+        if (filters.status) {
+            selector.where.status = { $in: filters.status };
+        }
+
+        return this.model.list(selector);
     }
 
     count(locale: ILocale): Promise<number> {

@@ -22,7 +22,7 @@ export class PopularConceptNamesEnumerator implements INamesEnumerator {
     private minCountWords = START_MIN_COUNT_WORDS;
     private maxCountWords: number | undefined
 
-    constructor(private options: PopularConceptNamesEnumeratorOptions,
+    constructor(
         private container: ConceptContainer,
         private conceptRep: IConceptReadRepository,
         private rootNameRep: IConceptRootNameRepository) { }
@@ -67,15 +67,8 @@ export class PopularConceptNamesEnumerator implements INamesEnumerator {
     }
 
     async getConceptNames(rootId: string): Promise<string[]> {
-        if (!rootId) {
-            throw new Error(`Invalid rootId`);
-        }
-        // const rootName = await this.rootNameRep.getById(rootId);
         const concepts = await this.conceptRep.getByRootNameId(rootId);
-        const names = ConceptHelper.getConceptsNames(concepts, this.options.rootNames);
-        // if (rootName && names.indexOf(rootName.name) < 0) {
-        //     names.push(rootName.name);
-        // }
+        const names = ConceptHelper.getConceptsNames(concepts);
 
         return names;
     }

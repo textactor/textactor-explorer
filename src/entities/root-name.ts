@@ -7,7 +7,6 @@ export type RootName = {
     containerId: string
 
     name: string
-    rootName: string
 
     popularity: number
     countWords: number

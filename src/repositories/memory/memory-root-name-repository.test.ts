@@ -48,7 +48,7 @@ test('#getPopularRootNameHashes', async t => {
     const concept1 = RootNameHelper.build({ name: 'Владимир Путин', country: 'ru', lang: 'ru', containerId: '1' });
     await repository.createOrUpdate(concept1);
 
-    const concept2 = RootNameHelper.build({ name: 'Владимира Путина', country: 'ru', lang: 'ru', containerId: '1' });
+    const concept2 = RootNameHelper.build({ name: 'Владимир Путин', country: 'ru', lang: 'ru', containerId: '1' });
     await repository.createOrUpdate(concept2);
 
     const concept3 = RootNameHelper.build({ name: 'Виктор Зубков', country: 'ru', lang: 'ru', containerId: '1' });
@@ -82,5 +82,5 @@ test('#deleteUnpopular', async t => {
     const popularRootNames = await repository.getByIds(popularIds);
 
     t.is(popularRootNames.length, 1);
-    t.is(popularRootNames[0].popularity, 3);
+    t.is(popularRootNames[0].popularity, 2);
 })

@@ -1,7 +1,7 @@
 
 import { ILocale } from '../../types';
 import { RepUpdateData } from '../repository';
-import { IConceptContainerRepository } from '../concept-container-repository';
+import { IConceptContainerRepository, ContainerListFilters } from '../concept-container-repository';
 import { ConceptContainer, ConceptContainerStatus } from '../../entities/concept-container';
 
 export class MemoryConceptContainerRepository implements IConceptContainerRepository {
@@ -41,17 +41,26 @@ export class MemoryConceptContainerRepository implements IConceptContainerReposi
         return Promise.resolve(null);
     }
 
-    list(locale: ILocale, limit: number, skip?: number): Promise<ConceptContainer[]> {
-        skip = skip || 0;
+    list(filters: ContainerListFilters): Promise<ConceptContainer[]> {
+        const skip = filters.skip || 0;
         const list: ConceptContainer[] = []
         for (let item of this.db.values()) {
-            if (item.country !== locale.country || item.lang !== locale.lang) {
+            if (item.country !== filters.country || item.lang !== filters.lang) {
+                continue;
+            }
+            if (filters.ownerId && filters.ownerId !== item.ownerId) {
+                continue;
+            }
+            if (filters.uniqueName && filters.uniqueName !== item.uniqueName) {
+                continue;
+            }
+            if (filters.status && filters.status.indexOf(item.status) < 0) {
                 continue;
             }
             list.push(item)
         }
 
-        return Promise.resolve(list.slice(skip, skip + limit));
+        return Promise.resolve(list.slice(skip, skip + filters.limit));
     }
 
     getById(id: string): Promise<ConceptContainer | null> {

@@ -2,8 +2,8 @@
   "name": "textactor-explorer",
   "version": "0.1.0",
   "description": "A nodejs module for exploring TextActors(Named entities) in texts.",
-  "main": "./lib/api/index.js",
-  "types": "./types/api/index.d.ts",
+  "main": "./lib/index.js",
+  "types": "./types/index.d.ts",
   "scripts": {
     "pretest": "npm run clean && npm run tsc",
     "test": "ava --no-cache --verbose lib/**/*.test.js",

@@ -1,14 +1,14 @@
 
 import test from 'ava';
-import { MemoryConceptRepository } from '../../repositories/test/memory-concept-repository';
-import { MemoryWikiEntityRepository } from '../../repositories/test/memory-wiki-entity-repository';
+import { MemoryConceptRepository } from '../../repositories/memory/memory-concept-repository';
+import { MemoryWikiEntityRepository } from '../../repositories/memory/memory-wiki-entity-repository';
 import { ILocale } from '../../types';
 import { ExploreWikiEntities } from './explore-wiki-entities';
 import { ConceptHelper } from '../../entities/concept-helper';
 import { PushContextConcepts } from './push-context-concepts';
-import { MemoryWikiSearchNameRepository } from '../../repositories/test/memory-wiki-search-name-repository';
-import { MemoryWikiTitleRepository } from '../../repositories/test/memory-wiki-title-repository';
-import { MemoryRootNameRepository } from '../../repositories//test/memory-root-name-repository';
+import { MemoryWikiSearchNameRepository } from '../../repositories/memory/memory-wiki-search-name-repository';
+import { MemoryWikiTitleRepository } from '../../repositories/memory/memory-wiki-title-repository';
+import { MemoryRootNameRepository } from '../../repositories/memory/memory-root-name-repository';
 import { ICountryTagsService } from './find-wiki-titles';
 import { ConceptContainer, ConceptContainerStatus } from '../../entities/concept-container';
 import { PopularConceptNamesEnumerator } from '../../services/popular-concept-names-enumerator';
@@ -30,7 +30,7 @@ test('ro-md', async t => {
         ownerId: 'test',
         status: ConceptContainerStatus.NEW,
     };
-    const namesEnumerator = new PopularConceptNamesEnumerator({ rootNames: true }, container, conceptRepository, rootNameRep);
+    const namesEnumerator = new PopularConceptNamesEnumerator(container, conceptRepository, rootNameRep);
     const exploreWikiEntities = new ExploreWikiEntities(container,
         namesEnumerator,
         wikiEntityRepository,

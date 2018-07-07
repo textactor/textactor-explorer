@@ -2,9 +2,9 @@
 import { ExploreName } from './explore-name';
 import test from 'ava';
 import { ConceptContainer, ConceptContainerStatus } from '../entities/concept-container';
-import { MemoryWikiEntityRepository } from '../repositories/test/memory-wiki-entity-repository';
-import { MemoryWikiSearchNameRepository } from '../repositories/test/memory-wiki-search-name-repository';
-import { MemoryWikiTitleRepository } from '../repositories/test/memory-wiki-title-repository';
+import { MemoryWikiEntityRepository } from '../repositories/memory/memory-wiki-entity-repository';
+import { MemoryWikiSearchNameRepository } from '../repositories/memory/memory-wiki-search-name-repository';
+import { MemoryWikiTitleRepository } from '../repositories/memory/memory-wiki-title-repository';
 import { ICountryTagsService } from './actions/find-wiki-titles';
 import { IKnownNameService } from '../services/known-names-service';
 

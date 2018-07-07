@@ -1,35 +1,29 @@
 
 // const debug = require('debug')('textactor-explorer');
 
-import { Connection } from "mongoose";
-import { MongoParams } from "../data/mongo/mongo-model";
-import { ConceptContainerModel } from "../data/mongo/concept-container-model";
 import { ConceptContainerStatus } from "../entities/concept-container";
 import { ConceptContainerHelper } from "../entities/concept-container-helper";
 import { parse } from 'concepts-parser';
 import { KnownConceptData, ConceptHelper } from "../entities/concept-helper";
 import { PushContextConcepts } from "../usecases/actions/push-context-concepts";
-import { ConceptModel } from "../data/mongo/concept-model";
-import { ConceptRepository } from "../data/concept-repository";
-import { ConceptRootNameModel } from "../data/mongo/concept-root-name-model";
-import { ConceptRootNameRepository } from "../data/concept-root-name-repository";
 import { KnownNameService } from "@textactor/known-names";
+import { IConceptContainerRepository } from "../repositories/concept-container-repository";
+import { IConceptRepository } from "../repositories/concept-repository";
+import { IConceptRootNameRepository } from "../repositories/concept-root-name-repository";
 
 export interface IDataContainerApi {
     newDataContainer(data: NewDataContainer): INewDataContainer
     findDataContainer(data: FindDataContainer): Promise<DataContainer[]>
 }
 
-export function createDataContainerApi(connection: Connection): IDataContainerApi {
+export function createDataContainerApi(
+    containerRep: IConceptContainerRepository,
+    conceptRep: IConceptRepository,
+    rootNameRep: IConceptRootNameRepository): IDataContainerApi {
+
     const knownNames = new KnownNameService();
-    const containerModel = new ConceptContainerModel(connection);
-    const conceptModel = new ConceptModel(connection);
-    const rootNameModel = new ConceptRootNameModel(connection);
 
-    const conceptRepository = new ConceptRepository(conceptModel);
-    const rootNameRepository = new ConceptRootNameRepository(rootNameModel);
-
-    const pushConcepts = new PushContextConcepts(conceptRepository, rootNameRepository, knownNames);
+    const pushConcepts = new PushContextConcepts(conceptRep, rootNameRep, knownNames);
 
     return {
         newDataContainer(data: NewDataContainer): INewDataContainer {
@@ -39,7 +33,7 @@ export function createDataContainerApi(connection: Connection): IDataContainerAp
                 container() { return container },
                 async pushText(text: string): Promise<void> {
                     if (container.status === ConceptContainerStatus.NEW) {
-                        await containerModel.update({ id: container.id, set: { status: ConceptContainerStatus.COLLECTING } });
+                        await containerRep.update({ id: container.id, set: { status: ConceptContainerStatus.COLLECTING } });
                     }
                     const context = {
                         text,
@@ -80,32 +74,12 @@ export function createDataContainerApi(connection: Connection): IDataContainerAp
                 },
                 async end(): Promise<void> {
                     container.status = ConceptContainerStatus.COLLECT_DONE;
-                    await containerModel.update({ id: container.id, set: { status: ConceptContainerStatus.COLLECT_DONE } });
+                    await containerRep.update({ id: container.id, set: { status: ConceptContainerStatus.COLLECT_DONE } });
                 }
             }
         },
         findDataContainer(data: FindDataContainer): Promise<DataContainer[]> {
-            const selector: MongoParams = {
-                where: {
-                    lang: data.lang,
-                    country: data.country,
-                },
-                limit: data.limit,
-                offset: data.offset,
-                sort: '-createdAt',
-            };
-
-            if (data.ownerId) {
-                selector.where.ownerId = data.ownerId;
-            }
-            if (data.uniqueName) {
-                selector.where.uniqueName = data.uniqueName;
-            }
-            if (data.status) {
-                selector.where.status = { $in: data.status };
-            }
-
-            return containerModel.list(selector);
+            return containerRep.list(data);
         }
     }
 }
