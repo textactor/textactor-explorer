@@ -6,6 +6,7 @@ import { MemoryConceptRepository } from '../repositories/test/memory-concept-rep
 import { MemoryRootNameRepository } from '../repositories/test/memory-root-name-repository';
 import { ConceptHelper } from '../entities/concept-helper';
 import { PushContextConcepts } from '../usecases/actions/push-context-concepts';
+import { KnownNameService } from '@textactor/known-names';
 
 
 test('empty list', async t => {
@@ -45,7 +46,7 @@ test('names with root name', async t => {
     const conceptRep = new MemoryConceptRepository();
     const rootRep = new MemoryRootNameRepository();
 
-    const pushConcepts = new PushContextConcepts(conceptRep, rootRep);
+    const pushConcepts = new PushContextConcepts(conceptRep, rootRep, new KnownNameService());
 
     await pushConcepts.execute([
         ConceptHelper.build({ containerId, lang, country, name: 'Maia Sandu' }),

@@ -8,6 +8,8 @@ import { IConceptRootNameRepository } from '../../repositories/concept-root-name
 import { RootNameHelper, KnownRootNameData } from '../../entities/root-name-helper';
 import { UseCase } from '../usecase';
 import { IKnownNameService } from '../../services/known-names-service';
+import getSameNames from 'same-names';
+import { uniq } from '../../utils';
 
 export class PushContextConcepts extends UseCase<Concept[], Concept[], void> {
     constructor(private conceptRep: IConceptWriteRepository,
@@ -18,6 +20,7 @@ export class PushContextConcepts extends UseCase<Concept[], Concept[], void> {
 
     protected innerExecute(concepts: Concept[]): Promise<Concept[]> {
         concepts = concepts.filter(concept => ConceptHelper.isValid(concept));
+        setSameIds(concepts);
         return Promise.all(concepts.map(concept => this.pushConcept(concept)));
     }
 
@@ -42,5 +45,27 @@ export class PushContextConcepts extends UseCase<Concept[], Concept[], void> {
         }
 
         return await this.conceptRep.createOrUpdate(concept);
+    }
+}
+
+function setSameIds(concepts: Concept[]) {
+    concepts = concepts.filter(concept => !concept.isAbbr && concept.nameLength > 4);
+    const names = concepts.map(concept => concept.name);
+
+    for (let concept of concepts) {
+        if (concept.knownName) {
+            concept.sameIds.push(ConceptHelper.id(concept.knownName, concept.lang, concept.country, concept.containerId));
+        }
+        let sameNames = getSameNames(concept.name, names, { lang: concept.lang });
+
+        if (sameNames && sameNames.length) {
+            sameNames = sameNames.filter(item => item.name !== concept.name && item.rating > 0.5);
+            if (concept.countWords === 1) {
+                sameNames = sameNames.filter(item => item.rating > 0.6);
+            }
+            const sameIds = sameNames.map(item => ConceptHelper.id(item.name, concept.lang, concept.country, concept.containerId));
+            concept.sameIds = concept.sameIds.concat(sameIds);
+        }
+        concept.sameIds = uniq(concept.sameIds);
     }
 }

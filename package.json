@@ -52,6 +52,7 @@
     "mongoose": "^5.2.0",
     "partial-name": "^0.1.4",
     "root-name": "^0.1.8",
+    "same-names": "^0.1.0",
     "shortid": "^2.2.8",
     "standard-text": "^0.1.1",
     "text-country": "^0.1.1",

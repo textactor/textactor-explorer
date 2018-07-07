@@ -100,7 +100,7 @@ test(`ro-ro: unexisting name`, async t => {
     const processName = new ExploreName(container, entityRep, searchName, titleService, tagsService, new KnownNamesService());
 
     const actor1 = await processName.execute('vdterywnteunrtur rtjhrt');
-    t.is(actor1 && actor1.wikiEntity, null);
+    t.is(actor1 && actor1.wikiEntity, undefined);
 });
 
 test(`ro-md: Ministerul Afacerilor Externe`, async t => {

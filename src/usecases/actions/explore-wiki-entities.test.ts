@@ -20,7 +20,7 @@ test('ro-md', async t => {
     const wikiSearchNameRepository = new MemoryWikiSearchNameRepository();
     const wikiTitleRepository = new MemoryWikiTitleRepository();
     const rootNameRep = new MemoryRootNameRepository();
-    const pushConcepts = new PushContextConcepts(conceptRepository, rootNameRep);
+    const pushConcepts = new PushContextConcepts(conceptRepository, rootNameRep, new KnownNamesService());
     const locale: ILocale = { lang: 'ro', country: 'md' };
     const container: ConceptContainer = {
         id: '1',

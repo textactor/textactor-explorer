@@ -50,6 +50,7 @@ export class ConceptHelper {
             rootNameIds,
             popularity,
             context: data.context,
+            sameIds: [],
         };
 
         if (data.knownName && ConceptHelper.isValidName(data.knownName, lang)) {

@@ -1,5 +1,5 @@
 
-const debug = require('debug')('textactor-explorer');
+// const debug = require('debug')('textactor-explorer');
 
 import { Connection } from "mongoose";
 import { MongoParams } from "../data/mongo/mongo-model";
