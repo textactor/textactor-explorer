@@ -3,10 +3,27 @@ import { Concept } from '../../entities/concept';
 import { ILocale } from '../../types';
 import { IConceptRepository } from '../concept-repository';
 import { RepUpdateData } from '../repository';
-import { uniqByProp } from '../../utils';
+import { uniqByProp, uniq } from '../../utils';
 
 export class MemoryConceptRepository implements IConceptRepository {
     private db: Map<string, Concept> = new Map()
+
+    async getBySameIds(ids: string[]): Promise<Concept[]> {
+        let list: Concept[] = [];
+        for (let item of this.db.values()) {
+            if (~ids.indexOf(item.id)) {
+                list.push(item);
+                continue;
+            }
+            for (let id of ids) {
+                if (~item.sameIds.indexOf(id)) {
+                    list.push(item);
+                    continue;
+                }
+            }
+        }
+        return uniqByProp(list, 'id');
+    }
 
     async getByRootNameIds(ids: string[]): Promise<Concept[]> {
         let list: Concept[] = [];
@@ -208,6 +225,8 @@ export class MemoryConceptRepository implements IConceptRepository {
             item = await this.create(concept);
         } else {
             item.popularity++;
+            item.sameIds = item.sameIds.concat(concept.sameIds);
+            item.sameIds = uniq(item.sameIds);
         }
 
         return Promise.resolve(item);
