@@ -25,6 +25,8 @@ export class PushContextConcepts extends UseCase<Concept[], Concept[], void> {
     }
 
     private async pushConcept(concept: Concept): Promise<Concept> {
+        ConceptHelper.setSameIds(concept);
+        
         let data: KnownRootNameData = { name: concept.name, lang: concept.lang, country: concept.country, containerId: concept.containerId };
         const rootName = RootNameHelper.build(data);
 
@@ -53,9 +55,6 @@ function setSameIds(concepts: Concept[]) {
     const names = concepts.map(concept => concept.name);
 
     for (let concept of concepts) {
-        if (concept.knownName) {
-            concept.sameIds.push(ConceptHelper.id(concept.knownName, concept.lang, concept.country, concept.containerId));
-        }
         let sameNames = getSameNames(concept.name, names, { lang: concept.lang });
 
         if (sameNames && sameNames.length) {

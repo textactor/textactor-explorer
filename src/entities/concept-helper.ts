@@ -57,6 +57,8 @@ export class ConceptHelper {
             concept.knownName = data.knownName.trim();
         }
 
+        ConceptHelper.setSameIds(concept);
+
         return concept;
     }
 
@@ -70,6 +72,21 @@ export class ConceptHelper {
 
     public static hash(name: string, lang: string, country: string, containerId: string) {
         return md5([lang.trim().toLowerCase(), country.trim().toLowerCase(), containerId.trim(), name.trim()].join('_'))
+    }
+
+    public static sameId(name: string, lang: string, country: string, containerId: string) {
+        name = NameHelper.normalizeName(name, lang);
+        name = NameHelper.atonic(name);
+
+        return ConceptHelper.hash(name, lang, country, containerId);
+    }
+
+    public static setSameIds(concept: Concept) {
+        concept.sameIds.push(ConceptHelper.sameId(concept.name, concept.lang, concept.country, concept.containerId));
+        if (concept.knownName) {
+            concept.sameIds.push(ConceptHelper.sameId(concept.knownName, concept.lang, concept.country, concept.containerId));
+        }
+        concept.sameIds = uniq(concept.sameIds);
     }
 
     public static id(name: string, lang: string, country: string, containerId: string) {
