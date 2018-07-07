@@ -51,8 +51,7 @@ export class RootNameHelper {
     }
 
     public static id(name: string, lang: string, country: string, containerId: string) {
-        name = NameHelper.normalizeName(name, lang);
-        name = NameHelper.atonic(name);
+        name = RootNameHelper.rootName(name, lang);
 
         return md5([lang.trim().toLowerCase(), country.trim().toLowerCase(), containerId.trim(), name.trim()].join('_'));
     }

@@ -3,6 +3,7 @@ import { MongoRepository } from './mongo/mongo-repository';
 import { Concept } from '../entities/concept';
 import { IConceptRepository } from '../repositories/concept-repository';
 import { ILocale } from '../types';
+import { uniq } from '../utils';
 
 export class ConceptRepository extends MongoRepository<Concept> implements IConceptRepository {
     getByRootNameId(id: string): Promise<Concept[]> {
@@ -98,6 +99,9 @@ export class ConceptRepository extends MongoRepository<Concept> implements IConc
                 return this.getById(item.id).then(dbItem => {
                     if (dbItem) {
                         item.popularity = dbItem.popularity + 1;
+                        if (item.rootNameIds) {
+                            item.rootNameIds = uniq(dbItem.rootNameIds.concat(item.rootNameIds));
+                        }
                         return this.update({ id: item.id, set: item });
                     } else {
                         throw new Error(`!NOT found concept on updating: ${item.name}`);
