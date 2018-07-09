@@ -31,11 +31,11 @@ export class WikiEntityHelper {
         }
 
         if (partial) {
-            const partialWords = partial.split(/\s+/g);
-            const entityNameWords = entityName.split(/\s+/g);
-            if (partialWords.length >= entityNameWords.length) {
-                return partial;
-            }
+            // const partialWords = partial.split(/\s+/g);
+            // const entityNameWords = entityName.split(/\s+/g);
+            // if (partialWords.length >= entityNameWords.length) {
+            //     return partial;
+            // }
             const partialFirstWord = NameHelper.atonic(partial.split(/\s+/)[0].toLowerCase());
             const entityNameFirstWord = NameHelper.atonic(entityName.split(/\s+/)[0].toLowerCase());
 

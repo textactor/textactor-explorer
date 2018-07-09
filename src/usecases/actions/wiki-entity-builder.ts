@@ -6,7 +6,6 @@ import { IKnownNameService } from "../../services/known-names-service";
 import { WikiEntity as ExternWikiEntity, convertToSimpleEntity } from 'wiki-entity';
 import { WikiEntityHelper } from "../../entities/wiki-entity-helper";
 import textCountry from 'text-country';
-import { RootNameHelper } from "../../entities/root-name-helper";
 import { ILocale } from "../../types";
 import { uniq, filterStrings } from "../../utils";
 import { NameHelper } from "../../name-helper";
@@ -52,7 +51,7 @@ export class WikiEntityBuilder implements IWikiEntityBuilder {
             data: simpleEntity.data,
             categories: simpleEntity.categories,
             rank: 1,
-            secondaryNames: [],
+            // secondaryNames: [],
             links: {},
         };
 
@@ -115,14 +114,7 @@ export class WikiEntityBuilder implements IWikiEntityBuilder {
         entity.names = entity.names.filter(name => WikiEntityHelper.isValidName(name, lang));
         entity.names = uniq(entity.names);
 
-        entity.names.forEach(name => {
-            let nname = WikiEntityHelper.rootName(name, lang);
-            if (entity.names.indexOf(nname) < 0 && WikiEntityHelper.isValidName(nname, lang)) {
-                entity.secondaryNames.push(nname);
-            }
-        });
-
-        entity.namesHashes = WikiEntityHelper.namesHashes(entity.names.concat(entity.secondaryNames), lang);
+        entity.namesHashes = WikiEntityHelper.namesHashes(entity.names, lang);
 
         let partialNames = entity.names.map(name => WikiEntityHelper.getPartialName(name, lang, entity.name))
             .filter(name => name && NameHelper.countWords(name) > 1 && entity.names.indexOf(name) < 0) as string[];
@@ -133,10 +125,7 @@ export class WikiEntityBuilder implements IWikiEntityBuilder {
 
             entity.partialNamesHashes = WikiEntityHelper.namesHashes(entity.partialNames, lang);
 
-            const partialNamesRoot = partialNames.map(name => RootNameHelper.rootName(name, lang));
-            const partialNamesRootHashes = WikiEntityHelper.namesHashes(partialNamesRoot, lang);
-
-            entity.partialNamesHashes = uniq(entity.partialNamesHashes.concat(partialNamesRootHashes));
+            entity.partialNamesHashes = uniq(entity.partialNamesHashes);
         }
 
         for (let name of Object.keys(entity)) {

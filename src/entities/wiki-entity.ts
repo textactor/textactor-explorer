@@ -20,7 +20,7 @@ export type WikiEntity = {
     namesHashes: string[]
     partialNames: string[]
     partialNamesHashes: string[]
-    secondaryNames: string[]
+    // secondaryNames: string[]
     abbr?: string
     description?: string
     aliases: string[]
