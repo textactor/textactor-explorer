@@ -2,6 +2,11 @@
 import { IWriteRepository, IReadRepository } from './repository';
 import { Concept } from '../entities/concept';
 
+export type PopularConceptsOptions = {
+    minCountWords?: number
+    maxCountWords?: number
+}
+
 export interface IConceptWriteRepository extends IWriteRepository<string, Concept> {
     deleteUnpopular(containerId: string, popularity: number): Promise<number>
     deleteUnpopularAbbreviations(containerId: string, popularity: number): Promise<number>
@@ -20,6 +25,7 @@ export interface IConceptReadRepository extends IReadRepository<string, Concept>
     getByRootNameId(id: string): Promise<Concept[]>
     getByRootNameIds(ids: string[]): Promise<Concept[]>
     getConceptsWithAbbr(containerId: string): Promise<Concept[]>
+    getMostPopular(containerId: string, limit: number, skip: number, options?: PopularConceptsOptions): Promise<Concept[]>
 }
 
 export interface IConceptRepository extends IConceptReadRepository, IConceptWriteRepository {

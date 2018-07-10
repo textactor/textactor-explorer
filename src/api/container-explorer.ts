@@ -6,7 +6,6 @@ import { CountryTagsService } from "./country-tags-service";
 import { KnownNameService } from "@textactor/known-names";
 import { IConceptContainerRepository } from "../repositories/concept-container-repository";
 import { IConceptRepository } from "../repositories/concept-repository";
-import { IConceptRootNameRepository } from "../repositories/concept-root-name-repository";
 import { IWikiEntityRepository } from "../repositories/wiki-entity-repository";
 import { IWikiSearchNameRepository } from "../repositories/wiki-search-name-repository";
 import { IWikiTitleRepository } from "../repositories/wiki-title-repository";
@@ -37,7 +36,6 @@ export class ContainerExplorer implements IContainerExplorer {
         private options: ContainerExplorerOptions,
         private containerRep: IConceptContainerRepository,
         private conceptRep: IConceptRepository,
-        private rootNameRep: IConceptRootNameRepository,
         private entityRep: IWikiEntityRepository,
         private searchNameRep: IWikiSearchNameRepository,
         private wikiTitleRep: IWikiTitleRepository,
@@ -69,7 +67,6 @@ export class ContainerExplorer implements IContainerExplorer {
             container,
             this.containerRep,
             this.conceptRep,
-            this.rootNameRep,
             this.entityRep,
             this.searchNameRep,
             this.wikiTitleRep,

@@ -2,7 +2,6 @@
 import { IContainerExplorer, ContainerExplorer, ContainerExplorerOptions } from "./container-explorer";
 import { IConceptContainerRepository } from "../repositories/concept-container-repository";
 import { IConceptRepository } from "../repositories/concept-repository";
-import { IConceptRootNameRepository } from "../repositories/concept-root-name-repository";
 import { IWikiEntityRepository } from "../repositories/wiki-entity-repository";
 import { IWikiSearchNameRepository } from "../repositories/wiki-search-name-repository";
 import { IWikiTitleRepository } from "../repositories/wiki-title-repository";
@@ -14,7 +13,6 @@ export interface IDataExplorerApi {
 export function createDataExplorerApi(
     containerRep: IConceptContainerRepository,
     conceptRep: IConceptRepository,
-    rootNameRep: IConceptRootNameRepository,
     entityRep: IWikiEntityRepository,
     searchNameRep: IWikiSearchNameRepository,
     wikiTitleRep: IWikiTitleRepository,
@@ -24,7 +22,6 @@ export function createDataExplorerApi(
             return new ContainerExplorer(containerId, options,
                 containerRep,
                 conceptRep,
-                rootNameRep,
                 entityRep,
                 searchNameRep,
                 wikiTitleRep);

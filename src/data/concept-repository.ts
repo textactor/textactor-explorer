@@ -1,11 +1,34 @@
 
 import { MongoRepository } from './mongo/mongo-repository';
 import { Concept } from '../entities/concept';
-import { IConceptRepository } from '../repositories/concept-repository';
+import { IConceptRepository, PopularConceptsOptions } from '../repositories/concept-repository';
 import { ILocale } from '../types';
 import { uniq } from '../utils';
+import { MongoParamsWhere } from './mongo/mongo-model';
 
 export class ConceptRepository extends MongoRepository<Concept> implements IConceptRepository {
+
+    getMostPopular(containerId: string, limit: number, skip: number, options?: PopularConceptsOptions): Promise<Concept[]> {
+        options = options || {};
+
+        const where: MongoParamsWhere = { containerId };
+        if (options.minCountWords) {
+            where.countWords = where.countWords || {};
+            where.countWords.$gte = options.minCountWords;
+        }
+        if (options.maxCountWords) {
+            where.countWords = where.countWords || {};
+            where.countWords.$lte = options.maxCountWords;
+        }
+
+        return this.model.list({
+            where,
+            limit,
+            offset: skip,
+            sort: '-popularity,createdAt',
+            select: '_id',
+        });
+    }
     getByRootNameId(id: string): Promise<Concept[]> {
         return this.model.list({
             where: {

@@ -2,7 +2,6 @@
 import { SimpleEntityType, SimpleEntity } from 'wiki-entity';
 import { WikiEntityType, WikiEntity } from './wiki-entity';
 import { partialName } from 'partial-name';
-import { RootNameHelper } from './root-name-helper';
 import { ConceptHelper } from './concept-helper';
 import { NameHelper } from '../name-helper';
 import { md5, uniq } from '../utils';
@@ -76,7 +75,7 @@ export class WikiEntityHelper {
     }
 
     static rootName(name: string, lang: string) {
-        return RootNameHelper.rootName(name, lang);
+        return ConceptHelper.rootName(name, lang);
     }
 
     static rootNameHash(name: string, lang: string) {

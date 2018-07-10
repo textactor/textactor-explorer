@@ -43,9 +43,7 @@ export {
 export {
     IConceptRepository,
 } from '../repositories/concept-repository';
-export {
-    IConceptRootNameRepository,
-} from '../repositories/concept-root-name-repository';
+
 export {
     IWikiEntityRepository,
 } from '../repositories/wiki-entity-repository';

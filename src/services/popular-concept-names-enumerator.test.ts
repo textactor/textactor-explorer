@@ -3,7 +3,6 @@ import test from 'ava';
 import { PopularConceptNamesEnumerator } from './popular-concept-names-enumerator';
 import { ConceptContainerHelper } from '../entities/concept-container-helper';
 import { MemoryConceptRepository } from '../repositories/memory/memory-concept-repository';
-import { MemoryRootNameRepository } from '../repositories/memory/memory-root-name-repository';
 import { ConceptHelper } from '../entities/concept-helper';
 import { PushContextConcepts } from '../usecases/actions/push-context-concepts';
 import { KnownNameService } from '@textactor/known-names';
@@ -19,9 +18,8 @@ test('empty list', async t => {
     });
 
     const conceptRep = new MemoryConceptRepository();
-    const rootRep = new MemoryRootNameRepository();
 
-    const enumerator = new PopularConceptNamesEnumerator({ mutable: false }, container, conceptRep, rootRep);
+    const enumerator = new PopularConceptNamesEnumerator({ mutable: false }, container, conceptRep);
 
     t.is(enumerator.atEnd(), false);
     const names = await enumerator.next();
@@ -44,9 +42,8 @@ test('names with root name', async t => {
     const containerId = container.id;
 
     const conceptRep = new MemoryConceptRepository();
-    const rootRep = new MemoryRootNameRepository();
 
-    const pushConcepts = new PushContextConcepts(conceptRep, rootRep, new KnownNameService());
+    const pushConcepts = new PushContextConcepts(conceptRep, new KnownNameService());
 
     await pushConcepts.execute([
         ConceptHelper.build({ containerId, lang, country, name: 'Maia Sandu' }),
@@ -55,7 +52,7 @@ test('names with root name', async t => {
         ConceptHelper.build({ containerId, lang, country, name: 'Facebook' }),
     ]);
 
-    const enumerator = new PopularConceptNamesEnumerator({ mutable: false }, container, conceptRep, rootRep);
+    const enumerator = new PopularConceptNamesEnumerator({ mutable: false }, container, conceptRep);
 
     t.is(enumerator.atEnd(), false);
     let names = await enumerator.next();

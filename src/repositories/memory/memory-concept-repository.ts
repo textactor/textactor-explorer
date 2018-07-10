@@ -1,12 +1,30 @@
 
 import { Concept } from '../../entities/concept';
 import { ILocale } from '../../types';
-import { IConceptRepository } from '../concept-repository';
+import { IConceptRepository, PopularConceptsOptions } from '../concept-repository';
 import { RepUpdateData } from '../repository';
 import { uniqByProp, uniq } from '../../utils';
 
 export class MemoryConceptRepository implements IConceptRepository {
     private db: Map<string, Concept> = new Map()
+
+    getMostPopular(containerId: string, limit: number, skip: number, options?: PopularConceptsOptions) {
+        options = { ...options };
+        const list: Concept[] = [];
+        for (let item of this.db.values()) {
+            if (item.containerId !== containerId) {
+                continue;
+            }
+            if (options.minCountWords && item.countWords < options.minCountWords) {
+                continue;
+            }
+            if (options.maxCountWords && item.countWords > options.maxCountWords) {
+                continue;
+            }
+            list.push(item);
+        }
+        return Promise.resolve(list.slice(skip, skip + limit));
+    }
 
     async getByRootNameIds(ids: string[]): Promise<Concept[]> {
         let list: Concept[] = [];

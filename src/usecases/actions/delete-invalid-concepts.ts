@@ -6,15 +6,11 @@ import { IWikiEntityRepository } from "../../repositories/wiki-entity-repository
 import { ConceptHelper } from '../../entities/concept-helper';
 import { ConceptContainer } from "../../entities/concept-container";
 import { UseCase } from "../usecase";
-import { IConceptRootNameRepository } from "../../repositories/concept-root-name-repository";
-import { uniq } from "../../utils";
-import { RootNameHelper } from "../../entities/root-name-helper";
 
 export class DeleteInvalidConcepts extends UseCase<void, void, void> {
 
     constructor(private container: ConceptContainer,
         private conceptRep: IConceptRepository,
-        private rootNameRep: IConceptRootNameRepository,
         private wikiEntityRep: IWikiEntityRepository) {
         super()
     }
@@ -26,11 +22,10 @@ export class DeleteInvalidConcepts extends UseCase<void, void, void> {
         const invalidNames = await this.wikiEntityRep.getInvalidPartialNames(lang);
         debug(`Deleting invalid names: ${JSON.stringify(invalidNames)}`);
 
-        const invalidNamesIds = uniq(invalidNames.map(item => ConceptHelper.id(item, lang, country, containerId)));
-        const invalidNamesRootIds = uniq(invalidNames.map(item => RootNameHelper.id(item, lang, country, containerId)));
+        const invalidNamesIds = ConceptHelper.ids(invalidNames, lang, country, containerId);
+        const invalidNamesRootIds = ConceptHelper.rootIds(invalidNames, lang, country, containerId);
 
         await this.conceptRep.deleteIds(invalidNamesIds);
         await this.conceptRep.deleteByRootNameIds(invalidNamesRootIds);
-        await this.rootNameRep.deleteIds(invalidNamesRootIds);
     }
 }

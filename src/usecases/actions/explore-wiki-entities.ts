@@ -34,6 +34,8 @@ export class ExploreWikiEntities extends UseCase<void, void, void> {
                 debug(`exploring wiki entity by names: ${names}`);
 
                 await this.exploreByNames.execute(names);
+            } else {
+                debug(`ExploreWikiEntities: no names!`);
             }
         }
     }

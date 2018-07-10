@@ -9,7 +9,6 @@ import { PushContextConcepts } from "../usecases/actions/push-context-concepts";
 import { KnownNameService } from "@textactor/known-names";
 import { IConceptContainerRepository } from "../repositories/concept-container-repository";
 import { IConceptRepository } from "../repositories/concept-repository";
-import { IConceptRootNameRepository } from "../repositories/concept-root-name-repository";
 
 export interface IDataContainerApi {
     newDataContainer(data: NewDataContainer): Promise<INewDataContainer>
@@ -18,12 +17,11 @@ export interface IDataContainerApi {
 
 export function createDataContainerApi(
     containerRep: IConceptContainerRepository,
-    conceptRep: IConceptRepository,
-    rootNameRep: IConceptRootNameRepository): IDataContainerApi {
+    conceptRep: IConceptRepository): IDataContainerApi {
 
     const knownNames = new KnownNameService();
 
-    const pushConcepts = new PushContextConcepts(conceptRep, rootNameRep, knownNames);
+    const pushConcepts = new PushContextConcepts(conceptRep, knownNames);
 
     return {
         async newDataContainer(data: NewDataContainer): Promise<INewDataContainer> {

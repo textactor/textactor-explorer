@@ -8,7 +8,6 @@ import { ConceptHelper } from '../../entities/concept-helper';
 import { PushContextConcepts } from './push-context-concepts';
 import { MemoryWikiSearchNameRepository } from '../../repositories/memory/memory-wiki-search-name-repository';
 import { MemoryWikiTitleRepository } from '../../repositories/memory/memory-wiki-title-repository';
-import { MemoryRootNameRepository } from '../../repositories/memory/memory-root-name-repository';
 import { ICountryTagsService } from './find-wiki-titles';
 import { ConceptContainer, ConceptContainerStatus } from '../../entities/concept-container';
 import { PopularConceptNamesEnumerator } from '../../services/popular-concept-names-enumerator';
@@ -19,8 +18,7 @@ test('ro-md', async t => {
     const wikiEntityRepository = new MemoryWikiEntityRepository();
     const wikiSearchNameRepository = new MemoryWikiSearchNameRepository();
     const wikiTitleRepository = new MemoryWikiTitleRepository();
-    const rootNameRep = new MemoryRootNameRepository();
-    const pushConcepts = new PushContextConcepts(conceptRepository, rootNameRep, new KnownNamesService());
+    const pushConcepts = new PushContextConcepts(conceptRepository, new KnownNamesService());
     const locale: ILocale = { lang: 'ro', country: 'md' };
     const container: ConceptContainer = {
         id: '1',
@@ -30,7 +28,7 @@ test('ro-md', async t => {
         ownerId: 'test',
         status: ConceptContainerStatus.NEW,
     };
-    const namesEnumerator = new PopularConceptNamesEnumerator({ mutable: false }, container, conceptRepository, rootNameRep);
+    const namesEnumerator = new PopularConceptNamesEnumerator({ mutable: false }, container, conceptRepository);
     const exploreWikiEntities = new ExploreWikiEntities(container,
         namesEnumerator,
         wikiEntityRepository,

@@ -1,6 +1,5 @@
 
 import { Concept } from './concept';
-import { RootNameHelper } from './root-name-helper';
 import { NameHelper } from '../name-helper';
 import { md5, uniq, filterStrings } from '../utils';
 
@@ -31,7 +30,7 @@ export class ConceptHelper {
         const countWords = NameHelper.countWords(name);
         const isIrregular = NameHelper.isIrregular(name);
         const endsWithNumber = NameHelper.endsWithNumberWord(name);
-        const rootNameIds = RootNameHelper.ids([data.knownName, name], lang, country, containerId);
+        const rootNameIds = ConceptHelper.rootIds([data.knownName, name], lang, country, containerId);
 
         const popularity = 1;
 
@@ -71,10 +70,6 @@ export class ConceptHelper {
         return md5([lang.trim().toLowerCase(), country.trim().toLowerCase(), containerId.trim(), name.trim()].join('_'))
     }
 
-    public static setRootIds(concept: Concept) {
-        concept.rootNameIds = uniq(concept.rootNameIds.concat(RootNameHelper.ids([concept.knownName, concept.name], concept.lang, concept.country, concept.containerId)));
-    }
-
     public static id(name: string, lang: string, country: string, containerId: string) {
         name = NameHelper.normalizeName(name, lang);
         return ConceptHelper.hash(name, lang, country, containerId);
@@ -82,6 +77,31 @@ export class ConceptHelper {
 
     public static ids(names: string[], lang: string, country: string, containerId: string) {
         return uniq(names.map(name => ConceptHelper.id(name, lang, country, containerId)));
+    }
+
+    public static rootName(name: string, lang: string) {
+        lang = lang.trim();
+        name = name.trim();
+
+        name = NameHelper.normalizeName(name, lang);
+        name = NameHelper.atonic(name);
+
+        return name;
+    }
+
+    public static rootId(name: string, lang: string, country: string, containerId: string) {
+        name = ConceptHelper.rootName(name, lang);
+
+        return ConceptHelper.id(name, lang, country, containerId);
+    }
+
+    static rootIds(names: (string | undefined | null)[], lang: string, country: string, containerId: string) {
+        const filteredNames = names.filter(name => name && name.trim().length > 1) as string[];
+        return uniq(filteredNames.map(name => ConceptHelper.rootId(name, lang, country, containerId)));
+    }
+
+    public static setRootIds(concept: Concept) {
+        concept.rootNameIds = uniq(concept.rootNameIds.concat(ConceptHelper.rootIds([concept.knownName, concept.name], concept.lang, concept.country, concept.containerId)));
     }
 
     public static getConceptsNames(concepts: Concept[]): string[] {

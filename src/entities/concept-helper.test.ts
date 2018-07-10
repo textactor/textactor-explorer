@@ -34,3 +34,11 @@ test('#create', t => {
     t.is(c1.isAbbr, false)
     t.is(c1.isIrregular, false)
 })
+
+test('#rootName', t => {
+    t.is(ConceptHelper.rootName('iPhone 5', 'ro'), 'iphone 5');
+    t.is(ConceptHelper.rootName('Ana Balan', 'ro'), 'ana balan');
+    t.is(ConceptHelper.rootName('Anei Balan', 'ro'), 'anei balan');
+    t.is(ConceptHelper.rootName('PLDM', 'ro'), 'PLDM');
+    t.is(ConceptHelper.rootName('Владимира Путина', 'ru'), 'владимира путина');
+})

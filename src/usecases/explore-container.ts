@@ -9,7 +9,6 @@ import { DeleteUnpopularConcepts, DeleteUnpopularConceptsOptions } from './actio
 import { ExploreWikiEntities } from './actions/explore-wiki-entities';
 import { IWikiSearchNameRepository } from '../repositories/wiki-search-name-repository';
 import { IWikiTitleRepository } from '../repositories/wiki-title-repository';
-import { IConceptRootNameRepository } from '../repositories/concept-root-name-repository';
 import { DeleteInvalidConcepts } from './actions/delete-invalid-concepts';
 import { ConceptContainer, ConceptContainerStatus } from '../entities/concept-container';
 import { IConceptContainerRepository } from '../repositories/concept-container-repository';
@@ -29,7 +28,6 @@ export class ExploreContainer extends UseCase<OnGenerateActorCallback, void, Exp
     constructor(private container: ConceptContainer,
         private containerRep: IConceptContainerRepository,
         private conceptRep: IConceptRepository,
-        private rootNameRep: IConceptRootNameRepository,
         private entityRep: IWikiEntityRepository,
         private wikiSearchNameRep: IWikiSearchNameRepository,
         private wikiTitleRep: IWikiTitleRepository,
@@ -51,20 +49,20 @@ export class ExploreContainer extends UseCase<OnGenerateActorCallback, void, Exp
             return Promise.reject(new Error(`ConceptContainer is not generateable: ${container.status}`));
         }
 
-        const deleteUnpopularConcepts = new DeleteUnpopularConcepts(container, this.conceptRep, this.rootNameRep);
-        const deleteInvalidConcepts = new DeleteInvalidConcepts(container, this.conceptRep, this.rootNameRep, this.entityRep);
+        const deleteUnpopularConcepts = new DeleteUnpopularConcepts(container, this.conceptRep);
+        const deleteInvalidConcepts = new DeleteInvalidConcepts(container, this.conceptRep, this.entityRep);
         const exploreWikiEntities = new ExploreWikiEntities(container,
-            new PopularConceptNamesEnumerator({ mutable: false }, container, this.conceptRep, this.rootNameRep),
+            new PopularConceptNamesEnumerator({ mutable: false }, container, this.conceptRep),
             this.entityRep,
             this.wikiSearchNameRep,
             this.wikiTitleRep,
             this.countryTags,
             this.knownNames);
         const generateActors = new GenerateActors(this.container,
-            new PopularConceptNamesEnumerator({ mutable: true }, container, this.conceptRep, this.rootNameRep),
-            new DeleteActorConcepts(container, this.conceptRep, this.rootNameRep),
+            new PopularConceptNamesEnumerator({ mutable: true }, container, this.conceptRep),
+            new DeleteActorConcepts(container, this.conceptRep),
             this.entityRep);
-        const cleanContainer = new CleanConceptContainer(this.conceptRep, this.rootNameRep);
+        const cleanContainer = new CleanConceptContainer(this.conceptRep);
 
         await this.containerRep.update({
             id: this.container.id,

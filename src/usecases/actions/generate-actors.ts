@@ -1,4 +1,6 @@
 
+const debug = require('debug')('textactor-explorer');
+
 import { IWikiEntityRepository } from '../../repositories/wiki-entity-repository';
 import { Actor } from '../../entities/actor';
 import { INamesEnumerator } from '../../services/names-enumerator';
@@ -29,6 +31,7 @@ export class GenerateActors extends UseCase<OnGenerateActorCallback, void, void>
             try {
                 const names = await this.namesEnumerator.next();
                 if (!names || !names.length) {
+                    debug(`GenerateActors: no names!`);
                     continue;
                 }
 
