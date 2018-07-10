@@ -26,7 +26,6 @@ export class ConceptRepository extends MongoRepository<Concept> implements IConc
             limit,
             offset: skip,
             sort: '-popularity,createdAt',
-            select: '_id',
         });
     }
     getByRootNameId(id: string): Promise<Concept[]> {
