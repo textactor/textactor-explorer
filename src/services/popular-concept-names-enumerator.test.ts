@@ -21,7 +21,7 @@ test('empty list', async t => {
     const conceptRep = new MemoryConceptRepository();
     const rootRep = new MemoryRootNameRepository();
 
-    const enumerator = new PopularConceptNamesEnumerator(container, conceptRep, rootRep);
+    const enumerator = new PopularConceptNamesEnumerator({ mutable: false }, container, conceptRep, rootRep);
 
     t.is(enumerator.atEnd(), false);
     const names = await enumerator.next();
@@ -55,7 +55,7 @@ test('names with root name', async t => {
         ConceptHelper.build({ containerId, lang, country, name: 'Facebook' }),
     ]);
 
-    const enumerator = new PopularConceptNamesEnumerator(container, conceptRep, rootRep);
+    const enumerator = new PopularConceptNamesEnumerator({ mutable: false }, container, conceptRep, rootRep);
 
     t.is(enumerator.atEnd(), false);
     let names = await enumerator.next();

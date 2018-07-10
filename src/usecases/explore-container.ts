@@ -54,14 +54,14 @@ export class ExploreContainer extends UseCase<OnGenerateActorCallback, void, Exp
         const deleteUnpopularConcepts = new DeleteUnpopularConcepts(container, this.conceptRep, this.rootNameRep);
         const deleteInvalidConcepts = new DeleteInvalidConcepts(container, this.conceptRep, this.rootNameRep, this.entityRep);
         const exploreWikiEntities = new ExploreWikiEntities(container,
-            new PopularConceptNamesEnumerator(container, this.conceptRep, this.rootNameRep),
+            new PopularConceptNamesEnumerator({ mutable: false }, container, this.conceptRep, this.rootNameRep),
             this.entityRep,
             this.wikiSearchNameRep,
             this.wikiTitleRep,
             this.countryTags,
             this.knownNames);
         const generateActors = new GenerateActors(this.container,
-            new PopularConceptNamesEnumerator(container, this.conceptRep, this.rootNameRep),
+            new PopularConceptNamesEnumerator({ mutable: true }, container, this.conceptRep, this.rootNameRep),
             new DeleteActorConcepts(container, this.conceptRep, this.rootNameRep),
             this.entityRep);
         const cleanContainer = new CleanConceptContainer(this.conceptRep, this.rootNameRep);

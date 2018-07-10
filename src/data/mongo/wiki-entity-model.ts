@@ -63,12 +63,6 @@ const ModelSchema = new Schema({
         minlength: 1,
         maxlength: 200,
     },
-    nameHash: {
-        type: String,
-        minlength: 16,
-        maxlength: 40,
-        required: true,
-    },
     names: {
         type: [String],
         required: true,
@@ -86,9 +80,6 @@ const ModelSchema = new Schema({
         type: [String],
         index: true,
         required: true,
-    },
-    secondaryNames: {
-        type: [String],
     },
     abbr: {
         type: String,

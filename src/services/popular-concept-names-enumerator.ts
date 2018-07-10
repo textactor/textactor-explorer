@@ -1,16 +1,17 @@
 
-// const debug = require('debug')('textactor-explorer');
+const debug = require('debug')('textactor-explorer');
 
 import { INamesEnumerator } from "./names-enumerator";
 import { ConceptContainer } from "../entities/concept-container";
 import { IConceptReadRepository } from "../repositories/concept-repository";
 import { IConceptRootNameRepository } from "../repositories/concept-root-name-repository";
 import { ConceptHelper } from "../entities/concept-helper";
+import { uniq, uniqByProp } from "../utils";
 
 const START_MIN_COUNT_WORDS = 2;
 
 export type PopularConceptNamesEnumeratorOptions = {
-    rootNames: boolean
+    mutable: boolean
 }
 
 export class PopularConceptNamesEnumerator implements INamesEnumerator {
@@ -21,15 +22,21 @@ export class PopularConceptNamesEnumerator implements INamesEnumerator {
     private end = false;
     private minCountWords = START_MIN_COUNT_WORDS;
     private maxCountWords: number | undefined
+    private pagesize: number = 10
 
     constructor(
+        private options: PopularConceptNamesEnumeratorOptions,
         private container: ConceptContainer,
         private conceptRep: IConceptReadRepository,
-        private rootNameRep: IConceptRootNameRepository) { }
+        private rootNameRep: IConceptRootNameRepository) {
+        if (options.mutable) {
+            this.limit = this.pagesize = 1;
+        }
+    }
 
     private reset() {
         this.skip = 0;
-        this.limit = 10;
+        this.limit = this.pagesize;
         this.currentIndex = -1;
         this.currentRootIds = null;
     }
@@ -58,7 +65,9 @@ export class PopularConceptNamesEnumerator implements INamesEnumerator {
             this.end = true;
             return [];
         }
-        this.skip += this.limit;
+        if (!this.options.mutable) {
+            this.skip += this.limit;
+        }
 
         this.currentRootIds = rootIds;
         this.currentIndex = 0;
@@ -67,7 +76,17 @@ export class PopularConceptNamesEnumerator implements INamesEnumerator {
     }
 
     async getConceptNames(rootId: string): Promise<string[]> {
-        const concepts = await this.conceptRep.getByRootNameId(rootId);
+        let concepts = await this.conceptRep.getByRootNameId(rootId);
+        const rootIds = uniq(concepts.reduce<string[]>((ids, current) => ids.concat(current.rootNameIds), []));
+        const index = rootIds.indexOf(rootId);
+        if (index > -1) {
+            rootIds.splice(index, 1);
+        }
+        if (rootIds.length) {
+            concepts = uniqByProp(concepts.concat(await this.conceptRep.getByRootNameIds(rootIds)), 'id');
+            debug(`Found more concepts by rootId: ${JSON.stringify(concepts.map(item => item.name))}`);
+        }
+
         const names = ConceptHelper.getConceptsNames(concepts);
 
         return names;

@@ -30,7 +30,7 @@ test('ro-md', async t => {
         ownerId: 'test',
         status: ConceptContainerStatus.NEW,
     };
-    const namesEnumerator = new PopularConceptNamesEnumerator(container, conceptRepository, rootNameRep);
+    const namesEnumerator = new PopularConceptNamesEnumerator({ mutable: false }, container, conceptRepository, rootNameRep);
     const exploreWikiEntities = new ExploreWikiEntities(container,
         namesEnumerator,
         wikiEntityRepository,
@@ -81,7 +81,7 @@ class CountryTags implements ICountryTagsService {
 }
 
 class KnownNamesService implements IKnownNameService {
-    getKnownName(_name: string, _lang: string, _country: string): { name: string; countryCodes?: string[]; }|null {
+    getKnownName(_name: string, _lang: string, _country: string): { name: string; countryCodes?: string[]; } | null {
         return null;
     }
 }
