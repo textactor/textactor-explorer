@@ -8,7 +8,9 @@ test('ro-md', async t => {
 
     const ilanShorEntities = await finder.execute(['Ilan Șor']);
     t.is(ilanShorEntities.length, 1);
+    // t.log(JSON.stringify(ilanShorEntities[0]));
     t.is(ilanShorEntities[0].wikiPageTitle, 'Ilan Șor');
+    t.true(Object.keys(ilanShorEntities[0].links).length > 1);
 });
 
 class KnownNamesService implements IKnownNameService {

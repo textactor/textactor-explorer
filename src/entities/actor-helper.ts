@@ -12,11 +12,11 @@ export class ActorHelper {
         const country = locale.country.trim().toLowerCase();
         names = ActorHelper.buildNames(lang, names, wikiEntity && wikiEntity.names);
 
-        if (wikiEntity && wikiEntity.countryCodes && wikiEntity.countryCodes.indexOf(country) > -1) {
-            names = names.concat(wikiEntity.partialNames || []);
-        }
+        // if (wikiEntity && wikiEntity.countryCodes && wikiEntity.countryCodes.indexOf(country) > -1) {
+        //     names = names.concat(wikiEntity.partialNames || []);
+        // }
 
-        names = uniq(names).filter(name => ConceptHelper.isValidName(name, lang));
+        // names = uniq(names).filter(name => ConceptHelper.isValidName(name, lang));
 
         if (!names.length) {
             throw new Error(`Invalid ConceptActor: no names!`);
