@@ -2643,17 +2643,13 @@ rimraf@2, rimraf@^2.5.1, rimraf@^2.6.1, rimraf@^2.6.2:
   dependencies:
     glob "^7.0.5"
 
-root-name@^0.1.8:
-  version "0.1.8"
-  resolved "https://registry.yarnpkg.com/root-name/-/root-name-0.1.8.tgz#00eec8892d9de1941468c3db6687f878761fed03"
-
 safe-buffer@^5.0.1, safe-buffer@^5.1.1, safe-buffer@~5.1.0, safe-buffer@~5.1.1:
   version "5.1.1"
   resolved "https://registry.yarnpkg.com/safe-buffer/-/safe-buffer-5.1.1.tgz#893312af69b2123def71f57889001671eeb2c853"
 
-same-names@^0.1.0:
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/same-names/-/same-names-0.1.0.tgz#02b7807a2156d4446f8fff4870a0cfda6d1cdaf6"
+same-names@^0.1.2:
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/same-names/-/same-names-0.1.2.tgz#67cdd492085d2b1c74629989f37d9b8cb803f6fc"
 
 saslprep@^1.0.0:
   version "1.0.0"
