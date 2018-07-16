@@ -55,6 +55,6 @@
     "shortid": "^2.2.8",
     "standard-text": "^0.1.1",
     "text-country": "^0.1.1",
-    "wiki-entity": "^0.4.0"
+    "wiki-entity": "^0.4.1"
   }
 }
