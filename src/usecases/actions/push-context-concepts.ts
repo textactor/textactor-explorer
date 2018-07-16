@@ -45,7 +45,7 @@ function setSameIds(concepts: Concept[]) {
         if (sameNames && sameNames.length) {
             sameNames = sameNames.filter(item => item.name !== concept.name && item.rating > 0.5);
             if (concept.countWords === 1) {
-                sameNames = sameNames.filter(item => item.rating > 0.6);
+                sameNames = sameNames.filter(item => item.rating > 0.7);
             }
             const sameIds = sameNames.map(item => ConceptHelper.rootId(item.name, concept.lang, concept.country, concept.containerId));
             concept.rootNameIds = concept.rootNameIds.concat(sameIds);
