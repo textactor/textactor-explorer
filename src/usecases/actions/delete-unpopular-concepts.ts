@@ -9,10 +9,6 @@ export interface DeleteUnpopularConceptsOptions {
     minConceptPopularity: number
     minAbbrConceptPopularity: number
     minOneWordConceptPopularity: number
-
-    minRootConceptPopularity: number
-    minRootAbbrConceptPopularity: number
-    minRootOneWordConceptPopularity: number
 }
 
 export class DeleteUnpopularConcepts extends UseCase<DeleteUnpopularConceptsOptions, void, void> {

@@ -44,9 +44,9 @@
   dependencies:
     arrify "^1.0.1"
 
-"@textactor/known-names@^0.1.0":
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/@textactor/known-names/-/known-names-0.1.0.tgz#9206df8b66d941881cef30e27e214fe812067860"
+"@textactor/known-names@^0.1.1":
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/@textactor/known-names/-/known-names-0.1.1.tgz#2b8eff084564474afb9db1e8e6aba36aaa084303"
 
 "@types/boom@^7.2.0":
   version "7.2.0"
