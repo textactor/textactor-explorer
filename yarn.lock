@@ -2565,9 +2565,9 @@ safe-buffer@^5.0.1, safe-buffer@^5.1.1, safe-buffer@^5.1.2, safe-buffer@~5.1.0, 
   version "2.1.2"
   resolved "https://registry.yarnpkg.com/safer-buffer/-/safer-buffer-2.1.2.tgz#44fa161b0187b9549dd84bb91802f9bd8385cd6a"
 
-same-names@^0.1.2:
-  version "0.1.2"
-  resolved "https://registry.yarnpkg.com/same-names/-/same-names-0.1.2.tgz#67cdd492085d2b1c74629989f37d9b8cb803f6fc"
+same-names@^0.1.4:
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/same-names/-/same-names-0.1.4.tgz#8dc808350eebdad5c92c371c206730830237ed77"
 
 saslprep@^1.0.0:
   version "1.0.0"

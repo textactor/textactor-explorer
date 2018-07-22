@@ -1,6 +1,6 @@
 {
   "name": "textactor-explorer",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "A nodejs module for exploring TextActors(Named entities) in texts.",
   "main": "./lib/index.js",
   "types": "./types/index.d.ts",
@@ -51,7 +51,7 @@
     "entity-finder": "^0.5.2",
     "mongoose": "^5.2.0",
     "partial-name": "^0.1.4",
-    "same-names": "^0.1.2",
+    "same-names": "^0.1.4",
     "shortid": "^2.2.8",
     "standard-text": "^0.1.1",
     "text-country": "^0.1.1",
