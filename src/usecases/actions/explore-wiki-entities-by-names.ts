@@ -43,7 +43,7 @@ export class ExploreWikiEntitiesByNames extends UseCase<string[], void, void> {
             const searchName = await this.wikiSearchNameRep.getById(WikiSearchNameHelper.createId(name, lang, country));
             if (searchName && searchName.updatedAt && searchName.updatedAt * 1000 > Date.now() - ms('7days')) {
                 debug(`WikiSearchName=${name} exists!`);
-                return;
+                continue;
             }
 
             unknownNames.push(name);
@@ -71,7 +71,7 @@ export class ExploreWikiEntitiesByNames extends UseCase<string[], void, void> {
             const wikiTitle = await this.wikiTitleRep.getById(WikiTitleHelper.createId(title, lang));
             if (wikiTitle && wikiTitle.updatedAt && wikiTitle.updatedAt * 1000 > Date.now() - ms('10days')) {
                 debug(`WikiTitle=${title} exists!`);
-                return;
+                continue;
             }
             titles.push(title);
         }
