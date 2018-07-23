@@ -65,7 +65,12 @@ export class PopularConceptNamesEnumerator implements INamesEnumerator {
             this.end = true;
             return [];
         }
-        if (!this.options.mutable) {
+        if (this.options.mutable) {
+            if (this.currentData && this.currentData.length && concepts.length && this.currentData[0].id === concepts[0].id) {
+                throw new Error(`Got the same concept: ${concepts[0].name}`);
+            }
+        }
+        else {
             this.skip += this.limit;
         }
 
@@ -75,7 +80,7 @@ export class PopularConceptNamesEnumerator implements INamesEnumerator {
         return await this.getConceptNames(this.currentData[this.currentIndex++]);
     }
 
-    async getConceptNames(concept: Concept): Promise<string[]> {
+    protected async getConceptNames(concept: Concept): Promise<string[]> {
         let concepts = await this.conceptRep.getByRootNameIds(concept.rootNameIds);
         const rootIds = uniq(concepts.reduce<string[]>((ids, current) => ids.concat(current.rootNameIds), []));
 

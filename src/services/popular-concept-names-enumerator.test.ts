@@ -79,3 +79,52 @@ test('names with root name', async t => {
 
     t.is(enumerator.atEnd(), true);
 });
+
+test('mutable', async t => {
+    const lang = 'ro';
+    const country = 'ro';
+    const container = ConceptContainerHelper.build({
+        lang,
+        country,
+        name: 'Name',
+        uniqueName: 'name',
+        ownerId: 'id',
+    });
+
+    const containerId = container.id;
+
+    const conceptRep = new MemoryConceptRepository();
+
+    const pushConcepts = new PushContextConcepts(conceptRep, new KnownNameService());
+
+    await pushConcepts.execute([
+        ConceptHelper.build({ containerId, lang, country, name: 'Maia Sandu' }),
+        ConceptHelper.build({ containerId, lang, country, name: 'Maiei Sandu' }),
+        ConceptHelper.build({ containerId, lang, country, name: 'Partidul Liberal' }),
+        ConceptHelper.build({ containerId, lang, country, name: 'Facebook' }),
+        ConceptHelper.build({ containerId, lang, country, name: 'Moldova' }),
+        ConceptHelper.build({ containerId, lang, country, name: 'Chisinau' }),
+        ConceptHelper.build({ containerId, lang, country, name: 'Moscova' }),
+    ]);
+
+    const orderedNames = [
+        ['Maia Sandu', 'Maiei Sandu'],
+        ['Partidul Liberal'],
+        ['Facebook'],
+        ['Moldova'],
+        ['Chisinau'],
+        ['Moscova'],
+    ];
+
+    const enumerator = new PopularConceptNamesEnumerator({ mutable: true }, container, conceptRep);
+
+    for (const knownNames of orderedNames) {
+        const names = await enumerator.next();
+        t.deepEqual(names, knownNames);
+        await conceptRep.deleteByRootNameIds(ConceptHelper.rootIds(names, lang, country, containerId));
+    }
+
+    t.deepEqual(await enumerator.next(), []);
+
+    t.is(enumerator.atEnd(), true);
+});
