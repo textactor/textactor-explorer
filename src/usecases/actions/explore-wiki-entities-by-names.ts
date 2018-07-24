@@ -12,10 +12,10 @@ import { IWikiTitleRepository } from '../../repositories/wiki-title-repository';
 import { WikiTitleHelper } from '../../entities/wiki-title';
 import { IKnownNameService } from '../../services/known-names-service';
 import { UseCase } from '../usecase';
-import { uniq } from '../../utils';
 import ms = require('ms');
+import { uniq } from '../../utils';
 
-export class ExploreWikiEntitiesByNames extends UseCase<string[], void, void> {
+export class ExploreWikiEntitiesByNames extends UseCase<string[], string[], void> {
     private exploreWikiEntitiesByTitles: FindWikiEntitiesByTitles;
     private saveWikiEntities: SaveWikiEntities;
     private findWikiTitles: FindWikiTitles;
@@ -33,9 +33,11 @@ export class ExploreWikiEntitiesByNames extends UseCase<string[], void, void> {
         this.findWikiTitles = new FindWikiTitles(locale, countryTags);
     }
 
-    protected async innerExecute(names: string[]): Promise<void> {
+    protected async innerExecute(names: string[]): Promise<string[]> {
         const lang = this.locale.lang;
         const country = this.locale.country;
+
+        names = uniq(names);
 
         const unknownNames: string[] = []
 
@@ -55,16 +57,20 @@ export class ExploreWikiEntitiesByNames extends UseCase<string[], void, void> {
             }));
         }
 
+        // debug(`unknownNames ${JSON.stringify(unknownNames)}`)
+
         if (unknownNames.length === 0) {
-            return;
+            return [];
         }
 
-        let initalTitles = await this.findWikiTitles.execute(unknownNames);
+        const initalTitles = await this.findWikiTitles.execute(unknownNames);
+
+        // debug(`initalTitles ${JSON.stringify(initalTitles)}`)
+
         if (!initalTitles.length) {
-            return;
+            return [];
         }
 
-        initalTitles = uniq(initalTitles);
         const titles: string[] = [];
 
         for (let title of initalTitles) {
@@ -76,8 +82,10 @@ export class ExploreWikiEntitiesByNames extends UseCase<string[], void, void> {
             titles.push(title);
         }
 
+        // debug(`titles ${JSON.stringify(titles)}`)
+
         if (titles.length === 0) {
-            return;
+            return [];
         }
 
         const wikiEntities = await this.exploreWikiEntitiesByTitles.execute(titles);
@@ -92,5 +100,7 @@ export class ExploreWikiEntitiesByNames extends UseCase<string[], void, void> {
         for (let title of titles) {
             await this.wikiTitleRep.createOrUpdate(WikiTitleHelper.create({ title, lang, }))
         }
+
+        return titles;
     }
 }

@@ -8,19 +8,17 @@ import { UseCase } from "../usecase";
 
 export class FindWikiTitles extends UseCase<string[], string[], null> {
 
-    constructor(private locale: ILocale, private countryTags: ICountryTagsService) {
+    private tags: string[]
+    constructor(private locale: ILocale, countryTags: ICountryTagsService) {
         super()
+        this.tags = countryTags.getTags(locale.country, locale.lang);
     }
 
     protected async innerExecute(names: string[]): Promise<string[]> {
-
-        const lang = this.locale.lang;
-        const country = this.locale.country;
-
         names = uniq(names);
 
-        const tags = this.countryTags.getTags(country, lang);
         let allTitles: string[] = [];
+        const tags = this.tags;
 
         for (let name of names) {
             debug(`finding wiki titles for ${name}...`);

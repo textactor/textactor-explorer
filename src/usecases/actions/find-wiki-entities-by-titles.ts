@@ -5,7 +5,7 @@ import { ILocale } from "../../types";
 import { WikiEntity } from "../../entities/wiki-entity";
 import { getEntities, WikiEntitiesParams, WikiEntity as ExternWikiEntity } from 'wiki-entity';
 import { WikiEntityHelper } from "../../entities/wiki-entity-helper";
-import { isTimeoutError, delay } from "../../utils";
+import { isTimeoutError, delay, uniq, uniqByProp } from "../../utils";
 import { IKnownNameService } from "../../services/known-names-service";
 import { IWikiEntityBuilder, WikiEntityBuilder } from "./wiki-entity-builder";
 import { UseCase } from "../usecase";
@@ -19,6 +19,8 @@ export class FindWikiEntitiesByTitles extends UseCase<string[], WikiEntity[], nu
     }
 
     protected async innerExecute(titles: string[]): Promise<WikiEntity[]> {
+
+        titles = uniq(titles);
 
         debug(`exploring wiki entities for ${titles.join('|')}`);
 
@@ -44,6 +46,7 @@ export class FindWikiEntitiesByTitles extends UseCase<string[], WikiEntity[], nu
         }
         wikiEntities = wikiEntities || [];
         wikiEntities = wikiEntities.filter(item => !!item);
+        wikiEntities = uniqByProp(wikiEntities, 'id');
 
         if (wikiEntities.length === 0) {
             debug(`NO wiki entities found for ${titles.join('|')}`);

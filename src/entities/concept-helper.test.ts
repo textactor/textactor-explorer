@@ -42,3 +42,14 @@ test('#rootName', t => {
     t.is(ConceptHelper.rootName('PLDM', 'ro'), 'PLDM');
     t.is(ConceptHelper.rootName('Владимира Путина', 'ru'), 'владимира путина');
 })
+
+test('#getConceptsNames', t => {
+    const concepts = [
+        { name: 'Москве', knownName: 'Москва' },
+        { name: 'Москву' }
+    ].map(item => ConceptHelper.build({ lang: 'ru', country: 'ru', containerId: '1', ...item }));
+
+    const names = ConceptHelper.getConceptsNames(concepts);
+
+    t.deepEqual(names, ['Москва', 'Москве', 'Москву']);
+})

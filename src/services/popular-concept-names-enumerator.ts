@@ -82,6 +82,7 @@ export class PopularConceptNamesEnumerator implements INamesEnumerator {
 
     protected async getConceptNames(concept: Concept): Promise<string[]> {
         let concepts = await this.conceptRep.getByRootNameIds(concept.rootNameIds);
+
         const rootIds = uniq(concepts.reduce<string[]>((ids, current) => ids.concat(current.rootNameIds), []));
 
         if (rootIds.length > concept.rootNameIds.length) {
@@ -89,7 +90,7 @@ export class PopularConceptNamesEnumerator implements INamesEnumerator {
             debug(`Found more concepts by ${concept.name}: ${JSON.stringify(concepts.map(item => item.name))}`);
         }
 
-        const names = ConceptHelper.getConceptsNames(concepts);
+        const names = ConceptHelper.getConceptsNames([concept].concat(concepts));
 
         return names;
     }
