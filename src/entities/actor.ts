@@ -6,6 +6,7 @@ export type Actor = {
     country: string
     name: string
     names: string[]
+    commonName?: string
     
     wikiEntity?: WikiEntity
 }

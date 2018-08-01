@@ -34,6 +34,7 @@ test('#build Valeriu Munteanu ro-md', async t => {
     t.is(wikiEntity.wikiPageTitle, title, 'wiki entity page title===title');
     const actor = ActorHelper.build(locale, ['Valeriu Munteanu'], wikiEntity);
     t.is(actor.name, title, 'actor name===title');
+    t.is(actor.commonName, 'Valeriu Munteanu');
 });
 
 test('#validate', t => {
