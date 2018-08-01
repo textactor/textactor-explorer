@@ -11,6 +11,7 @@ export type KnownConceptData = {
     abbr?: string
     knownName?: string
     context?: string
+    popularity?: number
 }
 
 export class ConceptHelper {
@@ -32,7 +33,7 @@ export class ConceptHelper {
         const endsWithNumber = NameHelper.endsWithNumberWord(name);
         const rootNameIds = ConceptHelper.rootIds([data.knownName, name], lang, country, containerId);
 
-        const popularity = 1;
+        const popularity = data.popularity || 1;
 
         const concept: Concept = {
             id,
@@ -109,6 +110,8 @@ export class ConceptHelper {
             return [];
         }
         const { lang } = concepts[0];
+        concepts = concepts.sort((a, b) => b.popularity - a.popularity);
+
         let conceptNames = filterStrings(concepts.map(item => item.knownName));
         conceptNames = conceptNames.concat(concepts.map(item => item.name));
 

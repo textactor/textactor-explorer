@@ -45,11 +45,12 @@ test('#rootName', t => {
 
 test('#getConceptsNames', t => {
     const concepts = [
-        { name: 'Москве', knownName: 'Москва' },
-        { name: 'Москву' }
+        { name: 'Москве', knownName: 'Москва', popularity: 1 },
+        { name: 'Москву', popularity: 3 },
+        { name: 'Москвс', popularity: 2 },
     ].map(item => ConceptHelper.build({ lang: 'ru', country: 'ru', containerId: '1', ...item }));
 
     const names = ConceptHelper.getConceptsNames(concepts);
 
-    t.deepEqual(names, ['Москва', 'Москве', 'Москву']);
+    t.deepEqual(names, ['Москва', 'Москву', 'Москвс', 'Москве']);
 })
