@@ -10,7 +10,10 @@ import { WikiEntityBuilder } from '../usecases/actions/wiki-entity-builder';
 test('#buildNames', t => {
     const lang = 'ro';
     t.deepEqual(ActorHelper.buildNames(lang, []), [], 'Empty names');
-    t.deepEqual(ActorHelper.buildNames(lang, ['Name 1'], ['Long Name 1']), ['Long Name 1', 'Name 1'], 'Concat names');
+    const names = ['Name 1'];
+    const wikiNames = ['Long Name 1'];
+    t.deepEqual(ActorHelper.buildNames(lang, names, wikiNames), ['Long Name 1', 'Name 1'], 'Concat names');
+    t.is(names.length, 1);
 });
 
 test('#build', t => {
