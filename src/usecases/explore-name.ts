@@ -11,12 +11,13 @@ import { IKnownNameService } from '../services/known-names-service';
 import { Actor } from '../entities/actor';
 import { ICountryTagsService } from './actions/find-wiki-titles';
 import { ILocale } from '../types';
+import { ActorNameCollection } from '../entities/actor-name-collection';
 
 export class ExploreName extends UseCase<string | string[], Actor | null, void> {
     private actorBuilder: BuildActorByNames;
     private exploreWikiEntities: ExploreWikiEntitiesByNames;
 
-    constructor(locale: ILocale,
+    constructor(private locale: ILocale,
         private entityRep: IWikiEntityRepository,
         private wikiSearchNameRep: IWikiSearchNameRepository,
         private wikiTitleRep: IWikiTitleRepository,
@@ -42,6 +43,8 @@ export class ExploreName extends UseCase<string | string[], Actor | null, void> 
 
         name = Array.isArray(name) ? name : [name];
 
+        const lang = this.locale.lang;
+
         debug(`Start processing: ${name}`);
 
         debug(`=====> Start exploreWikiEntities`);
@@ -49,7 +52,7 @@ export class ExploreName extends UseCase<string | string[], Actor | null, void> 
         debug(`<===== End exploreWikiEntities`);
 
         debug(`=====> Start generateActors`);
-        const actor = await this.actorBuilder.execute(name);
+        const actor = await this.actorBuilder.execute(ActorNameCollection.fromArray(name, lang));
         debug(`<===== End generateActors`);
 
         debug(`End processing name: ${name}`);

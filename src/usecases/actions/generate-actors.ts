@@ -29,19 +29,21 @@ export class GenerateActors extends UseCase<OnGenerateActorCallback, void, void>
 
         while (!this.namesEnumerator.atEnd()) {
             try {
-                const names = await this.namesEnumerator.next();
-                if (!names || !names.length) {
+                const actorNames = await this.namesEnumerator.next();
+                if (!actorNames.length) {
                     debug(`GenerateActors: no names!`);
                     continue;
                 }
 
-                actor = await this.buildActor.execute(names);
+                const names = actorNames.nameList();
+
+                actor = await this.buildActor.execute(actorNames);
                 if (this.postNamesProcess) {
                     await this.postNamesProcess.execute(names);
                 }
                 if (actor) {
                     if (this.postNamesProcess) {
-                        await this.postNamesProcess.execute(actor.names);
+                        await this.postNamesProcess.execute(actor.names.map(item => item.name));
                     }
                 }
             } catch (e) {

@@ -1,7 +1,8 @@
 
 import { Concept } from './concept';
 import { NameHelper } from '../name-helper';
-import { md5, uniq, filterStrings } from '../utils';
+import { md5, uniq } from '../utils';
+import { ActorNameCollection } from './actor-name-collection';
 
 export type KnownConceptData = {
     lang: string
@@ -105,21 +106,14 @@ export class ConceptHelper {
         concept.rootNameIds = uniq(concept.rootNameIds.concat(ConceptHelper.rootIds([concept.knownName, concept.name], concept.lang, concept.country, concept.containerId)));
     }
 
-    public static getConceptsNames(concepts: Concept[]): string[] {
+    public static getConceptsNames(concepts: Concept[]) {
         if (concepts.length === 0) {
-            return [];
+            throw new Error(`No concepts!`);
         }
         const { lang } = concepts[0];
         concepts = concepts.sort((a, b) => b.popularity - a.popularity);
 
-        let conceptNames = filterStrings(concepts.map(item => item.knownName));
-        conceptNames = conceptNames.concat(concepts.map(item => item.name));
-
-        conceptNames = conceptNames.filter(name => ConceptHelper.isValidName(name, lang));
-
-        conceptNames = uniq(conceptNames);
-
-        return conceptNames;
+        return ActorNameCollection.fromConcepts(lang, concepts);
     }
 
     static isValidName(name: string | null | undefined, lang: string): boolean {

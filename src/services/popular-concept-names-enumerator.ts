@@ -7,6 +7,7 @@ import { IConceptReadRepository } from "../repositories/concept-repository";
 import { ConceptHelper } from "../entities/concept-helper";
 import { uniq, uniqByProp } from "../utils";
 import { Concept } from "../entities/concept";
+import { ActorNameCollection } from "../entities/actor-name-collection";
 
 const START_MIN_COUNT_WORDS = 2;
 
@@ -44,10 +45,10 @@ export class PopularConceptNamesEnumerator implements INamesEnumerator {
         return this.end;
     }
 
-    async next(): Promise<string[]> {
+    async next(): Promise<ActorNameCollection> {
         if (this.end) {
             debug(`END`)
-            return [];
+            return new ActorNameCollection(this.container.lang);
         }
         if (this.currentData && this.currentIndex < this.currentData.length) {
             return await this.getConceptNames(this.currentData[this.currentIndex++]);
@@ -63,7 +64,7 @@ export class PopularConceptNamesEnumerator implements INamesEnumerator {
                 return this.next();
             }
             this.end = true;
-            return [];
+            return new ActorNameCollection(this.container.lang);
         }
         if (this.options.mutable) {
             if (this.currentData && this.currentData.length && concepts.length && this.currentData[0].id === concepts[0].id) {
@@ -80,7 +81,7 @@ export class PopularConceptNamesEnumerator implements INamesEnumerator {
         return await this.getConceptNames(this.currentData[this.currentIndex++]);
     }
 
-    protected async getConceptNames(concept: Concept): Promise<string[]> {
+    protected async getConceptNames(concept: Concept) {
         let concepts = await this.conceptRep.getByRootNameIds(concept.rootNameIds);
 
         const rootIds = uniq(concepts.reduce<string[]>((ids, current) => ids.concat(current.rootNameIds), []));

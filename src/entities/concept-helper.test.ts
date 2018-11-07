@@ -52,5 +52,5 @@ test('#getConceptsNames', t => {
 
     const names = ConceptHelper.getConceptsNames(concepts);
 
-    t.deepEqual(names, ['Москва', 'Москву', 'Москвс', 'Москве']);
+    t.deepEqual(names.nameList(), ['Москву', 'Москвс', 'Москва', 'Москве']);
 })

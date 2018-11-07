@@ -1,30 +1,25 @@
 
 import { WikiEntity } from "./wiki-entity";
-import { Actor } from "./actor";
+import { Actor, ActorName } from "./actor";
 import { ConceptHelper } from "./concept-helper";
 import { ILocale } from "../types";
-import { uniq } from "../utils";
 import { NameHelper } from "../name-helper";
+import { ActorNameCollection } from "./actor-name-collection";
 
 export class ActorHelper {
-    static build(locale: ILocale, names: string[], wikiEntity?: WikiEntity): Actor {
+    static build(locale: ILocale, actorNames: ActorNameCollection, wikiEntity?: WikiEntity): Actor {
 
         const lang = locale.lang.trim().toLowerCase();
         const country = locale.country.trim().toLowerCase();
-        const initialNames = names;
-        names = ActorHelper.buildNames(lang, names, wikiEntity && wikiEntity.names);
+        actorNames = ActorHelper.buildNames(lang, actorNames, wikiEntity && wikiEntity.names);
 
-        // if (wikiEntity && wikiEntity.countryCodes && wikiEntity.countryCodes.indexOf(country) > -1) {
-        //     names = names.concat(wikiEntity.partialNames || []);
-        // }
-
-        // names = uniq(names).filter(name => ConceptHelper.isValidName(name, lang));
+        const names = actorNames.list();
 
         if (!names.length) {
             throw new Error(`Invalid ConceptActor: no names!`);
         }
 
-        const name = wikiEntity && wikiEntity.name || names[0];
+        const name = wikiEntity && wikiEntity.name || names[0].name;
 
         const actor: Actor = {
             lang,
@@ -34,32 +29,66 @@ export class ActorHelper {
             names,
         };
 
-        if (wikiEntity && !ActorHelper.isValidCommonName(name)) {
-            const wikiNames = wikiEntity.names;
-            if (wikiEntity.simpleName && NameHelper.countWords(wikiEntity.simpleName) > 1) {
-                wikiNames.push(wikiEntity.simpleName);
-            }
-            const commonNames = wikiNames.reduce<string[]>((result, name) => {
-                initialNames.forEach(sameName => {
-                    if (name === sameName && ActorHelper.isValidCommonName(sameName)) {
-                        result.push(name);
-                    }
-                });
-                return result;
-            }, []);
+        const commonName = ActorHelper.findCommonName(name, names);
 
-            if (commonNames.length) {
-                actor.commonName = commonNames[0];
-            }
+        if (commonName) {
+            actor.commonName = commonName;
+        }
+
+        const abbr = ActorHelper.findAbbr(name, names);
+
+        if (abbr) {
+            actor.abbr = abbr;
         }
 
         return actor;
     }
 
-    static buildNames(lang: string, names: string[], entityNames?: string[]) {
-        names = (entityNames || []).concat(names || []);
-        names = names.filter(name => ConceptHelper.isValidName(name, lang));
-        return uniq(names);
+    static findAbbr(name: string, names: ActorName[]) {
+        const abbr = names.find(item => item.isAbbr && item.popularity > 1 && item.type === 'WIKI' && name.length > item.name.length);
+        if (abbr) {
+            return abbr.name;
+        }
+        return null;
+    }
+
+    static findCommonName(name: string, names: ActorName[]) {
+        const nameCountWords = NameHelper.countWords(name);
+        if (nameCountWords < 3) {
+            return null;
+        }
+
+        const popularName = names.find(item => !item.isAbbr && item.popularity > 1 && ActorHelper.isValidCommonName(item.name));
+
+        if (!popularName || popularName.popularity < 10) {
+            return null;
+        }
+
+        const popularNameCountWords = NameHelper.countWords(names[0].name);
+
+        if (popularNameCountWords < 2) {
+            return null;
+        }
+
+        if (nameCountWords <= popularNameCountWords) {
+            return null;
+        }
+
+        return popularName.name;
+    }
+
+    static buildNames(lang: string, nameCollection: ActorNameCollection, entityNames?: string[]) {
+        if (entityNames) {
+            const collection = new ActorNameCollection(lang);
+            for (const name of nameCollection.list()) {
+                collection.add(name);
+            }
+            for (const name of entityNames) {
+                collection.add({ name, popularity: 0, type: 'WIKI' });
+            }
+            nameCollection = collection;
+        }
+        return nameCollection;
     }
 
     static validate(entity: Partial<Actor>) {
@@ -78,7 +107,7 @@ export class ActorHelper {
         if (!entity.names || !entity.names.length) {
             throw new Error(`Invalid ConceptActor: no names`);
         }
-        const invalidName = entity.names.find(item => !ConceptHelper.isValidName(item, entity.lang as string));
+        const invalidName = entity.names.find(item => !ConceptHelper.isValidName(item.name, entity.lang as string));
         if (invalidName) {
             throw new Error(`Invalid ConceptActor: names contains invalid names: ${invalidName}`);
         }
