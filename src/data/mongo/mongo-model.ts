@@ -109,7 +109,12 @@ export class MongoModel<T> {
     }
 
     protected transformItem(item: Document): T {
-        return item.toJSON();
+        const json = item.toJSON();
+        if (json._id) {
+            json.id = json._id;
+            delete json._id;
+        }
+        return json;
     }
 }
 

@@ -16,7 +16,6 @@ export class ConceptContainerModel extends MongoModel<ConceptContainer> {
                 data.createdAt = Math.round(new Date(data.createdAt).getTime() / 1000);
             }
         }
-
         return data;
     }
     protected beforeCreating(data: ConceptContainer) {
